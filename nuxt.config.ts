@@ -9,7 +9,9 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@element-plus/nuxt',
   ],
-  elementPlus: { /** Options */ },
+  elementPlus: { 
+    themes: ['dark'],
+  },
   runtimeConfig: {
     public: {
       GOOGLE_CLIENT_ID: '557707932211-ihdomp72ajur19ts091ijet2ale3fkdm.apps.googleusercontent.com',
