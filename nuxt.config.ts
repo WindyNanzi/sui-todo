@@ -7,7 +7,9 @@ export default defineNuxtConfig({
   },
   modules: [
     '@vueuse/nuxt',
+    '@element-plus/nuxt',
   ],
+  elementPlus: { /** Options */ },
   runtimeConfig: {
     public: {
       GOOGLE_CLIENT_ID: '557707932211-ihdomp72ajur19ts091ijet2ale3fkdm.apps.googleusercontent.com',
