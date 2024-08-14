@@ -4,6 +4,20 @@ import { formatAddress } from '@mysten/sui/utils';
 const balance = ref(Number(0).toFixed(2))
 const address = ref('')
 const showAddress = ref('')
+const iconColor = ref('')
+
+const copy = () => {
+  const text = unref(address)
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      ElMessage.success('Copied!')
+      iconColor.value = '#67C23A'
+    }).catch((err) => {
+      ElMessage.error('Copy Error!')
+    }).finally(() => {
+      setTimeout(() => { iconColor.value = '' }, 1000)
+    })
+}
 
 onMounted(async() => {
   address.value = unref(useWalletAddress())
@@ -12,18 +26,31 @@ onMounted(async() => {
   balance.value = Number(0).toFixed(2)
   balance.value = await getFormattedBalance(unref(address))
   
+  
 })
 
 </script>
 
 <template>
   <aside class="user">
-    <ElAvatar class="avatar" src="/logo.svg" fit="contain">
+    <ElAvatar 
+      class="avatar" 
+      src="/logo.svg" 
+      fit="contain"
+      size="small"
+    >
 
     </ElAvatar>
     <div class="user-info">
-      <div class="addr">{{  showAddress  }}</div>
-      <div class="balance"> balance: {{ balance }} SUI </div>
+      <div class="addr">
+        <ElText size="small" type="info">{{  showAddress  }}</ElText>
+        <ElIcon class="copy-icon">
+          <ElIconCopyDocument :color="iconColor"  @click="copy" />
+        </ElIcon> 
+      </div>
+      <div class="balance"> 
+        <ElText size="small" type="info">balance {{ balance }} SUI </ElText> 
+      </div>
     </div>
   </aside>
 </template>
@@ -35,7 +62,7 @@ onMounted(async() => {
   align-items: center;
   height: 50px;
   padding: 5px;
-  width: 180px;
+  width: 160px;
   border-radius: 25px;
 
 
@@ -52,4 +79,10 @@ onMounted(async() => {
   background-color: transparent;
 }
 
+.copy-icon {
+  margin-left: 8px;
+  &:hover {
+    cursor: pointer;
+  }
+}
 </style>
