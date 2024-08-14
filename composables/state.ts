@@ -11,17 +11,17 @@ export const useJwt = () => {
 /** 从jwt中获取邮箱 */
 export const useClaims = () => {
   const token = unref(useJwt())
-  let result = reactive({ email: '' })
+  let result = ref({ email: '' })
   if (token) {
     const base64 = token.split('.')?.[1] || ''
-    result.email = JSON.parse(atob(base64))
+    result = JSON.parse(atob(base64))
   }
   return result
 }
 
 /** 加盐 */
 export const useSalt = () => {
-  const email = useClaims().email
+  const email = unref(useClaims()).email
   const salt = hashcode(email)
   return ref(salt)
 }
@@ -51,7 +51,7 @@ export const useIsAuthenticated = () => {
 export const useWalletAddress = () => {
   const jwt = unref(useJwt())
   const email = unref(useClaims()).email
-  const address = jwtToAddress(jwt, email)
+  const address = jwtToAddress(jwt, hashcode(email))
   return ref(address)
 }
 
