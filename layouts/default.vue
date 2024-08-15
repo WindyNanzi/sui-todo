@@ -1,18 +1,17 @@
 <script setup>
 const onlySwitch = ref(true)
 onMounted(() => {
-  onlySwitch.value = !unref(useIsAuthenticated());
+  onlySwitch.value = !unref(useIsAuthenticated())
 })
 </script>
 
 <template>
   <Html class="dark">
-    <TodoHeader :onlySwitch="onlySwitch"/>
+    <TodoHeader :only-switch="onlySwitch" />
 
     <div class="nuxt-content">
       <slot />
     </div>
-
   </Html>
 </template>
 
@@ -26,7 +25,6 @@ onMounted(() => {
     flex: 1;
   }
 }
-
 
 /** Animated Theme Toggle */
 ::view-transition-old(root),

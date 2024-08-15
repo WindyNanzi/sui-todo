@@ -9,7 +9,6 @@ useHead({
   ],
 })
 
-
 const layoutName = ref('default')
 
 onMounted(() => {
@@ -18,10 +17,10 @@ onMounted(() => {
   if (params.has(key)) {
     const jwt = params.get(key)
     sessionStorage.setItem('sui-jwt-token', jwt)
-    location.hash = ''  
+    location.hash = ''
   }
 
-  if(!unref(useJwt())) {
+  if (!unref(useJwt())) {
     navigateTo('/login')
   }
 })

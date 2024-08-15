@@ -1,5 +1,5 @@
 <script setup>
-import { formatAddress } from '@mysten/sui/utils';
+import { formatAddress } from '@mysten/sui/utils'
 
 const balance = ref(Number(0).toFixed(2))
 const address = ref('')
@@ -7,7 +7,7 @@ const showAddress = ref('')
 const iconColor = ref('')
 const copyIconName = ref('clipboard')
 
-const copy = () => {
+function copy() {
   const text = unref(address)
   navigator.clipboard.writeText(text)
     .then(() => {
@@ -17,42 +17,41 @@ const copy = () => {
     }).catch((err) => {
       ElMessage.error('Copy Error!')
     }).finally(() => {
-      setTimeout(() => { 
+      setTimeout(() => {
         iconColor.value = ''
         copyIconName.value = 'clipboard'
       }, 1000)
     })
 }
 
-onMounted(async() => {
+onMounted(async () => {
   address.value = unref(useWalletAddress())
   showAddress.value = formatAddress(unref(address))
 
   balance.value = Number(0).toFixed(2)
   balance.value = await getFormattedBalance(unref(address))
-  
-  
 })
-
 </script>
 
 <template>
   <aside class="user">
-    <ElAvatar 
-      class="avatar" 
-      src="/logo.svg" 
+    <ElAvatar
+      class="avatar"
+      src="/logo.svg"
       fit="contain"
       size="small"
-    >
-
-    </ElAvatar>
+    />
     <div class="user-info">
       <div class="addr">
-        <ElText size="small" type="info">{{  showAddress  }}</ElText>
-          <Icon class="copy-icon"  :name="`i-line-md-${copyIconName}`" :style="{ color: iconColor }"  @click="copy" />
+        <ElText size="small" type="info">
+          {{ showAddress }}
+        </ElText>
+        <Icon class="copy-icon" :name="`i-line-md-${copyIconName}`" :style="{ color: iconColor }" @click="copy" />
       </div>
-      <div class="balance"> 
-        <ElText size="small" type="info">balance {{ balance }} SUI </ElText> 
+      <div class="balance">
+        <ElText size="small" type="info">
+          balance {{ balance }} SUI
+        </ElText>
       </div>
     </div>
   </aside>
@@ -67,7 +66,6 @@ onMounted(async() => {
   padding: 5px;
   width: 160px;
   border-radius: 25px;
-
 
   .user-info {
     margin-left: 10px;

@@ -4,16 +4,16 @@ import { login } from '~/utils/service'
 const loginHandle = () => login()
 
 const list = [
-  { icon: 'Google', text: "Google",  }
+  { icon: 'Google', text: 'Google' },
 ]
 </script>
 
 <template>
   <div class="platform-list">
-    <div flex class="platform-item" v-for="(item, i) in list" :key="i" @click="loginHandle">
+    <div v-for="(item, i) in list" :key="i" flex class="platform-item" @click="loginHandle">
       <ElImage class="platform-icon" :src="`/${item.icon}.svg`" />
       <ElText>Login with {{ item.text }}</ElText>
-      <Icon  name="i-line-md-external-link" />
+      <Icon name="i-line-md-external-link" />
     </div>
   </div>
 </template>

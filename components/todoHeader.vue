@@ -3,7 +3,7 @@ const props = defineProps({
   onlySwitch: {
     type: Boolean,
     default: false,
-  }
+  },
 })
 </script>
 

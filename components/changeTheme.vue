@@ -1,12 +1,13 @@
 <script setup>
-let isDark = ref(true)
+const isDark = ref(true)
 
-let toggleDark = () => {
+function toggleDark() {
   const html = document.querySelector('html')
 
-  if(unref(isDark)) {
+  if (unref(isDark)) {
     html.className = ''
-  } else {
+  }
+  else {
     html.className = 'dark'
   }
 
@@ -17,11 +18,11 @@ let toggleDark = () => {
  * 检测用户的系统是否被开启了动画减弱功能
  * @link https://developer.mozilla.org/zh-CN/docs/Web/CSS/@media/prefers-reduced-motion
  */
-const isReducedMotion = () => {
+function isReducedMotion() {
   return window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true
 }
 
-const handleChange = (e) => {
+function handleChange(e) {
   const willDark = !unref(isDark)
   // 浏览器新特性不支持 或者 开启了动画减弱
   if (!document.startViewTransition || isReducedMotion()) {
@@ -39,7 +40,6 @@ const handleChange = (e) => {
 
   const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
   void transition.ready.then(() => {
-
     const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`]
     document.documentElement.animate(
       {
@@ -52,15 +52,13 @@ const handleChange = (e) => {
       },
     )
   })
-
 }
-
 </script>
 
 <template>
   <ElIcon class="theme-icon" @click="() => handleChange($el)">
-    <Icon name="i-line-md-moon-filled-alt-loop"  v-show="isDark"/>
-    <Icon name="i-line-md-moon-to-sunny-outline-loop-transition"  v-show="!isDark"/>
+    <Icon v-show="isDark" name="i-line-md-moon-filled-alt-loop" />
+    <Icon v-show="!isDark" name="i-line-md-moon-to-sunny-outline-loop-transition" />
   </ElIcon>
 </template>
 

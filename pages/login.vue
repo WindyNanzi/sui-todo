@@ -5,8 +5,8 @@
 <template>
   <div class="login-box">
     <div class="container">
-      <ElImage class="post-image" src="/plan.jpg"/>
-      
+      <ElImage class="post-image" src="/plan.jpg" />
+
       <PlatformList />
     </div>
   </div>
@@ -37,4 +37,3 @@
   transform: translateY(-50px);
 }
 </style>
-
