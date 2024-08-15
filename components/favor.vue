@@ -5,6 +5,7 @@ const balance = ref(Number(0).toFixed(2))
 const address = ref('')
 const showAddress = ref('')
 const iconColor = ref('')
+const copyIconName = ref('clipboard')
 
 const copy = () => {
   const text = unref(address)
@@ -12,10 +13,14 @@ const copy = () => {
     .then(() => {
       ElMessage.success('Copied!')
       iconColor.value = '#67C23A'
+      copyIconName.value = 'clipboard-check'
     }).catch((err) => {
       ElMessage.error('Copy Error!')
     }).finally(() => {
-      setTimeout(() => { iconColor.value = '' }, 1000)
+      setTimeout(() => { 
+        iconColor.value = ''
+        copyIconName.value = 'clipboard'
+      }, 1000)
     })
 }
 
@@ -44,9 +49,7 @@ onMounted(async() => {
     <div class="user-info">
       <div class="addr">
         <ElText size="small" type="info">{{  showAddress  }}</ElText>
-        <ElIcon class="copy-icon">
-          <ElIconCopyDocument :color="iconColor"  @click="copy" />
-        </ElIcon> 
+          <Icon class="copy-icon"  :name="`i-line-md-${copyIconName}`" :style="{ color: iconColor }"  @click="copy" />
       </div>
       <div class="balance"> 
         <ElText size="small" type="info">balance {{ balance }} SUI </ElText> 

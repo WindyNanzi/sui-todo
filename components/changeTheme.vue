@@ -59,8 +59,8 @@ const handleChange = (e) => {
 
 <template>
   <ElIcon class="theme-icon" @click="() => handleChange($el)">
-    <ElIconMoon :size="20" v-show="isDark"/>
-    <ElIconSunny :size="20" v-show="!isDark"/>
+    <Icon name="i-line-md-moon-filled-alt-loop"  v-show="isDark"/>
+    <Icon name="i-line-md-moon-to-sunny-outline-loop-transition"  v-show="!isDark"/>
   </ElIcon>
 </template>
 
