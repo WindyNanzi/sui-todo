@@ -22,6 +22,8 @@
   "devDependencies": {
     "@antfu/eslint-config": "^2.25.1",
     "@element-plus/nuxt": "^1.0.9",
+    "@iconify-json/line-md": "^1.1.39",
+    "@nuxt/icon": "^1.4.5",
     "@vueuse/core": "^10.11.1",
     "@vueuse/nuxt": "^10.11.1",
     "element-plus": "^2.8.0",

@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
     '@element-plus/nuxt',
+    '@nuxt/icon',
   ],
   elementPlus: { 
     themes: ['dark'],
