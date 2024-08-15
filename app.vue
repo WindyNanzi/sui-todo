@@ -9,12 +9,37 @@ useHead({
   ],
 })
 
-appInit()
+
+const layoutName = ref('default')
+
 onMounted(() => {
-  console.log(isAuthenticated())
+  const params = new URLSearchParams(window.location.hash.slice(1))
+  const key = 'id_token'
+  if (params.has(key)) {
+    const jwt = params.get(key)
+    sessionStorage.setItem('sui-jwt-token', jwt)
+    location.hash = ''  
+  }
+
+  if(!unref(useJwt())) {
+    navigateTo('/login')
+  }
 })
 </script>
 
 <template>
-  <nuxt-page />
+  <nuxt-layout :name="layoutName">
+    <nuxt-page />
+  </nuxt-layout>
 </template>
+
+<style lang="scss">
+html {
+  height: 100%;
+
+}
+body {
+  margin: 0;
+  height: 100%;
+}
+</style>
