@@ -21,7 +21,7 @@ const isReducedMotion = () => {
   return window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true
 }
 
-const handleChange = (_, e) => {
+const handleChange = (e) => {
   const willDark = !unref(isDark)
   // 浏览器新特性不支持 或者 开启了动画减弱
   if (!document.startViewTransition || isReducedMotion()) {
@@ -36,7 +36,6 @@ const handleChange = (_, e) => {
 
   // 传入点击事件，从点击处开始扩散。否则，从右上角开始扩散
   const { x, y } = e?.getBoundingClientRect()
-
 
   const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
   void transition.ready.then(() => {
@@ -59,18 +58,18 @@ const handleChange = (_, e) => {
 </script>
 
 <template>
-  <ElSwitch 
-    class="theme-switch" 
-    :model-value="isDark" 
-    @change="(val) => handleChange(val, $el)" 
-    :active-action-icon="ElIconMoon"
-    :inactive-action-icon="ElIconSunny" 
-    size="default" 
-  />
+  <ElIcon class="theme-icon" @click="() => handleChange($el)">
+    <ElIconMoon :size="20" v-show="isDark"/>
+    <ElIconSunny :size="20" v-show="!isDark"/>
+  </ElIcon>
 </template>
 
 <style lang="scss">
-.theme-switch {
-  
+.theme-icon {
+  cursor: pointer;
+  font-size: 20px;
+  border: 1px solid rgba(100, 100, 100 , 0.5);
+  padding: 6px;
+  border-radius: 50%;
 }
 </style>
