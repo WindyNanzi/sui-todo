@@ -1,14 +1,13 @@
 <script setup>
-
-
+const onlySwitch = ref(true)
+onMounted(() => {
+  onlySwitch.value = !unref(useIsAuthenticated());
+})
 </script>
 
 <template>
   <Html class="dark">
-    <header>
-      <Favor />
-      <ThemeSwitch />
-    </header>
+    <TodoHeader :onlySwitch="onlySwitch"/>
 
     <div class="nuxt-content">
       <slot />
@@ -28,12 +27,6 @@
   }
 }
 
-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 2px 20px;
-}
 
 /** Animated Theme Toggle */
 ::view-transition-old(root),
