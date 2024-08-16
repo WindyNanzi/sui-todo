@@ -1,7 +1,7 @@
 <script setup>
 const currentENV = SUI_CURRENT_ENV
-const changeENV = async (val) => {
-  if(currentENV.value !== val) {
+async function changeENV(val) {
+  if (currentENV.value !== val) {
     currentENV.value = val
 
     nextTick(() => {
@@ -10,42 +10,44 @@ const changeENV = async (val) => {
   }
 }
 const dropList = [
-  { id: 'main', text: 'Mainnet', handle:() => changeENV('main') },
-  { id: 'test', text:  'Testnet', handle:() => changeENV('test') },
+  { id: 'main', text: 'Mainnet', handle: () => changeENV('main') },
+  { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
 ]
-
 
 const isFaucetENV = computed(() => {
   return ['test'].includes(unref(currentENV))
 })
 
-
-const getGas = async () => {
+async function getGas() {
   emitter.emit('update-balance', true)
 }
-
 </script>
 
 <template>
-  <el-popover :width="200"
+  <el-popover
+    :width="200"
     popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
   >
     <template #reference>
       <ElButton circle class="setting-icon">
-        <Icon name="i-line-md-cog-filled-loop"/>
+        <Icon name="i-line-md-cog-filled-loop" />
       </ElButton>
     </template>
 
     <template #default>
       <div class="popper-body">
-        <div class="popper-item" v-for="item in dropList" :key="item.id" @click="item.handle">
-          <div class="badge-box"><ElBadge is-dot :offset="[20, 10]" v-show="item.id === currentENV"/></div> 
-          <div class="text-box">{{ item.text }}</div>
+        <div v-for="item in dropList" :key="item.id" class="popper-item" @click="item.handle">
+          <div class="badge-box">
+            <ElBadge v-show="item.id === currentENV" is-dot :offset="[20, 10]" />
+          </div>
+          <div class="text-box">
+            {{ item.text }}
+          </div>
         </div>
 
-        <ElDivider v-show="isFaucetENV"/>
-        <div class="popper-item" v-show="isFaucetENV" @click="getGas">
-          <div class="badge-box"></div>
+        <ElDivider v-show="isFaucetENV" />
+        <div v-show="isFaucetENV" class="popper-item" @click="getGas">
+          <div class="badge-box" />
           <div class="text-box">
             <span> Get fees </span>
             <Icon class="text-box-icon" name="i-line-md-coffee-loop" />
@@ -54,16 +56,13 @@ const getGas = async () => {
 
         <ElDivider />
         <div class="popper-item">
-          <div class="badge-box"></div>
+          <div class="badge-box" />
           <div class="text-box">
             <span> Logout </span>
             <Icon class="text-box-icon" name="i-line-md-logout" />
           </div>
         </div>
       </div>
-      
-
-
     </template>
   </el-popover>
 </template>
@@ -73,7 +72,6 @@ const getGas = async () => {
   font-size: 20px;
   margin-left: 12px;
 }
-
 
 .popper-item {
   width: 100%;

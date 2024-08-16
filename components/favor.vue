@@ -24,10 +24,10 @@ function copy() {
       }, 1000)
     })
 }
-const  updateBalance = async (isNeedGas = false) => {
+async function updateBalance(isNeedGas = false) {
   balanceLoading.value = true
   const p = Promise.resolve()
-  if(isNeedGas) {
+  if (isNeedGas) {
     p.then(() => {
       return getFeesByAddress(unref(address))
     })
@@ -35,14 +35,13 @@ const  updateBalance = async (isNeedGas = false) => {
 
   p.then(() => {
     return getFormattedBalance(unref(address))
-  }).then(res => {
-    balance.value =  res
-  }).catch(err => {
+  }).then((res) => {
+    balance.value = res
+  }).catch((err) => {
     ElMessage.error(err)
   }).finally(() => {
     balanceLoading.value = false
   })
-  
 }
 
 onMounted(async () => {
@@ -77,7 +76,7 @@ onMounted(async () => {
         <ElText size="small" type="info">
           balance {{ balance }} SUI
         </ElText>
-        <Icon name="i-line-md-loading-alt-loop"  v-show="balanceLoading" />
+        <Icon v-show="balanceLoading" name="i-line-md-loading-alt-loop" />
       </div>
     </div>
   </aside>

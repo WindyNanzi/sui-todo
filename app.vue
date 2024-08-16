@@ -46,7 +46,6 @@ body {
   outline: none;
 }
 
-
 div, span, p {
   caret-color: transparent;
 }
