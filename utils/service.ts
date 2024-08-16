@@ -22,6 +22,10 @@ export async function login() {
   const APP_REDIRECT_URL = config.public.APP_REDIRECT_URL as string
   const APP_OPENID_PROVIDER_URL = config.public.APP_OPENID_PROVIDER_URL as string
 
+  const instance = ElLoading.service({
+    fullscreen: true,
+    text: 'Loading...',
+  })
   const { epoch } = await unref(SUI_CLIENT).getLatestSuiSystemState();
 
   const maxEpoch = Number(epoch) + 2222;
@@ -49,9 +53,12 @@ export async function login() {
   try {
     const { data } = await apiCore(APP_OPENID_PROVIDER_URL, {}) as { data: any };
     const authUrl = `${unref(data)?.authorization_endpoint}?${params}`;
+    nextTick(() => instance.close())
     window.location.href = authUrl;
   } catch (error) {
     console.error('Error initiating Google login:', error);
+  } finally {
+    nextTick(() => instance.close())
   }
 }
 
