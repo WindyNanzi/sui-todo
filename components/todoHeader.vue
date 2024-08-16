@@ -1,4 +1,5 @@
 <script setup>
+
 const props = defineProps({
   onlySwitch: {
     type: Boolean,
@@ -11,6 +12,7 @@ const props = defineProps({
   <header>
     <Favor v-if="!props.onlySwitch" />
     <ChangeTheme />
+    <TodoSetting v-if="!props.onlySwitch" />
   </header>
 </template>
 
@@ -19,7 +21,7 @@ header {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 2px 20px;
+  padding: 2px 40px;
   height: 64px;
 }
 </style>

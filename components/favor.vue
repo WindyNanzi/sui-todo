@@ -6,6 +6,7 @@ const address = ref('')
 const showAddress = ref('')
 const iconColor = ref('')
 const copyIconName = ref('clipboard')
+const balanceLoading = ref(false)
 
 function copy() {
   const text = unref(address)
@@ -23,13 +24,37 @@ function copy() {
       }, 1000)
     })
 }
+const  updateBalance = async (isNeedGas = false) => {
+  balanceLoading.value = true
+  const p = Promise.resolve()
+  if(isNeedGas) {
+    p.then(() => {
+      return getFeesByAddress(unref(address))
+    })
+  }
+
+  p.then(() => {
+    return getFormattedBalance(unref(address))
+  }).then(res => {
+    balance.value =  res
+  }).catch(err => {
+    ElMessage.error(err)
+  }).finally(() => {
+    balanceLoading.value = false
+  })
+  
+}
 
 onMounted(async () => {
   address.value = unref(useWalletAddress())
   showAddress.value = formatAddress(unref(address))
 
   balance.value = Number(0).toFixed(2)
-  balance.value = await getFormattedBalance(unref(address))
+  updateBalance()
+
+  emitter.on('update-balance', (val = false) => {
+    updateBalance(val)
+  })
 })
 </script>
 
@@ -52,6 +77,7 @@ onMounted(async () => {
         <ElText size="small" type="info">
           balance {{ balance }} SUI
         </ElText>
+        <Icon name="i-line-md-loading-alt-loop"  v-show="balanceLoading" />
       </div>
     </div>
   </aside>
@@ -64,7 +90,7 @@ onMounted(async () => {
   align-items: center;
   height: 50px;
   padding: 5px;
-  width: 160px;
+  margin-right: 12px;
   border-radius: 25px;
 
   .user-info {
@@ -72,7 +98,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     font-size: 12px;
-    opacity: .4;
+    opacity: .8;
   }
 }
 

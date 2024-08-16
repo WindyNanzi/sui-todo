@@ -1,11 +1,13 @@
 import { generateNonce, generateRandomness } from "@mysten/zklogin"
 import { apiCore } from "./api"
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
+import mitt from 'mitt'
 
 
 export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('test')
-export const SUI_CURRENT_NODE_URL = useFullNodeUrl(unref(SUI_CURRENT_ENV))
-export const SUI_CLIENT = useClient(unref(SUI_CURRENT_NODE_URL))
+export const SUI_CURRENT_NODE_URL = computed(() => unref(useFullNodeUrl(unref(SUI_CURRENT_ENV)))) 
+export const SUI_CLIENT = computed(() => unref(useClient(unref(SUI_CURRENT_NODE_URL)))) 
+export const emitter = mitt()
 
 /** 
  * 获取 Balance
@@ -62,6 +64,21 @@ export async function login() {
   }
 }
 
-
+export async function getFeesByAddress(address: string) {
+  const url = `https://faucet.${ unref(SUI_CURRENT_ENV) }net.sui.io:443/gas`
+  return apiCore(url, {
+    method: 'POST',
+    mode:'cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      FixedAmountRequest: {
+        recipient: address
+      }
+    }), 
+  }).then(res => res?.data)
+  .catch(err => ElMessage.error(err))
+}
 
 
