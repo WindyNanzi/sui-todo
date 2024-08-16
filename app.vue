@@ -41,4 +41,13 @@ body {
   margin: 0;
   height: 100%;
 }
+
+:focus-visible {
+  outline: none;
+}
+
+
+div, span, p {
+  caret-color: transparent;
+}
 </style>
