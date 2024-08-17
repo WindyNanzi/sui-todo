@@ -1,7 +1,9 @@
 import { generateNonce, generateRandomness } from "@mysten/zklogin"
+import { Transaction } from '@mysten/sui/transactions'
 import { apiCore } from "./api"
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
 import mitt from 'mitt'
+import type { SignatureWithBytes } from "@mysten/sui/cryptography"
 
 
 export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('test')
@@ -82,3 +84,68 @@ export async function getFeesByAddress(address: string) {
 }
 
 
+export  function makeMoveCall(txtData: any, txb: Transaction) {
+  const client = unref(SUI_CLIENT)
+  const keypairs = getEd25519Keypair()
+  const sender = unref(useWalletAddress())
+  let tmpBytes = ''
+  const instance = ElLoading.service({
+    fullscreen: true,
+    text: 'Loading...',
+  })
+
+  txb.setSender(sender)
+  txb.moveCall(txtData)
+
+  return txb.sign({
+    client,
+    signer: keypairs,
+  }).then((res) => {
+    const { bytes, signature } = res;
+    tmpBytes = bytes
+    return generateZkLoginSignature(signature)
+  }).then(res => {
+    return client.executeTransactionBlock({
+      transactionBlock: tmpBytes,
+      signature: res,
+      options: {
+        showBalanceChanges: true,
+        showEvents: true,
+      }
+    })
+  }).catch(err => {
+    ElMessage.error(err?.message)
+  }).finally(() => {
+    instance.close()
+  })
+}
+  
+
+interface TodoItem {
+  item: string,
+  date: number,
+  width: number,
+  background: string,
+}
+
+
+export async function addTodoItem(params: TodoItem) {
+  const txb = new Transaction()
+  const config = useRuntimeConfig()
+  const packageId = config.public.APP_PACKAGE_ID as string
+  const { item='', date= new Date().getTime(), width=0, background ='' } = params
+  
+  const objs = {
+    package: packageId,
+    module: 'todo',
+    function: 'add',
+    arguments: [
+      txb.pure.string(item),
+      txb.pure.u64(date),
+      txb.pure.u8(width),
+      txb.pure.string(background),
+    ]
+  }
+
+  return makeMoveCall(objs, txb)
+}

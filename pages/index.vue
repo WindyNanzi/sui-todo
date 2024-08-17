@@ -1,17 +1,27 @@
 <script setup>
-import { login } from '~/utils/service'
 
-const loginHandle = () => login()
 </script>
 
 <template>
-  <div>
-    <button @click="() => loginHandle()">
-      hello
-    </button>
-  </div>
+  <main class="main">
+
+    <div class="input-container">
+      <TodoInput />
+    </div>
+  </main>
 </template>
 
-<style>
+<style lang="scss" scoped>
+main {
+  width: 100%;
+  height: 100%;
+}
 
+.input-container {
+  position: absolute;
+  bottom: 100px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 </style>

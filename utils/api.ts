@@ -30,7 +30,7 @@ export const apiCore = (url: string, params:any) => {
       console.log('检测到错误')
       const message = error?.message || '服务器未知错误'
       if(import.meta.client) {
-        // ElMessage.error(message)
+        ElMessage.error(message)
       } else {
         // 需要经过一层包裹才能跳转
         app.runWithContext(() => {
