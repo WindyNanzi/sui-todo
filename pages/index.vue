@@ -19,7 +19,7 @@ main {
 
 .input-container {
   position: absolute;
-  bottom: 100px;
+  bottom: 50px;
   width: 100%;
   display: flex;
   justify-content: center;
