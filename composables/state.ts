@@ -145,7 +145,7 @@ async function verifyPartialZkLoginSignature(zkpRequestPayload: any): Promise<Pa
       }
     })
     const partialZkLoginSignature = proofResponse.data as unknown as PartialZkLoginSignature
-    return partialZkLoginSignature
+    return unref(partialZkLoginSignature)
   } catch (error) {
     console.log("failed to reqeust the partial sig: ", error)
     return {} as unknown as PartialZkLoginSignature
