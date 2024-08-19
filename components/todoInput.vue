@@ -62,6 +62,7 @@ const add = async () => {
       show-word-limit
       @keydown.enter="add"
       clearable
+      placeholder="add todo item"
     >
       <template #prefix>
         <Icon name="i-line-md-plus" style="font-size: 20px;" />
