@@ -3,10 +3,9 @@ import { Transaction } from '@mysten/sui/transactions'
 import { apiCore } from "./api"
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
 import mitt from 'mitt'
-import type { SignatureWithBytes } from "@mysten/sui/cryptography"
 
 
-export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('test')
+export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('dev')
 export const SUI_CURRENT_NODE_URL = computed(() => unref(useFullNodeUrl(unref(SUI_CURRENT_ENV)))) 
 export const SUI_CLIENT = computed(() => unref(useClient(unref(SUI_CURRENT_NODE_URL)))) 
 export const emitter = mitt()
@@ -44,7 +43,7 @@ export async function login() {
   };
 
 
-  sessionStorage.setItem("jwt_data", JSON.stringify(jwtData));
+  sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
 
   const params = new URLSearchParams({
     client_id: GOOGLE_CLIENT_ID,
@@ -59,8 +58,8 @@ export async function login() {
     const authUrl = `${unref(data)?.authorization_endpoint}?${params}`;
     nextTick(() => instance.close())
     window.location.href = authUrl;
-  } catch (error) {
-    console.error('Error initiating Google login:', error);
+  } catch (error: any) {
+    ElMessage.error('Error initiating Google login:', error?.message);
   } finally {
     nextTick(() => instance.close())
   }
@@ -93,7 +92,7 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
     fullscreen: true,
     text: 'Loading...',
   })
-
+  txb.setGasBudget(1_000_000_000)
   txb.setSender(sender)
   txb.moveCall(txtData)
 

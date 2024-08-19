@@ -36,7 +36,7 @@ export const useDecodeJwt = () => {
 
 
 export const useJwtData = () => {
-  const data = useSessionStorage('jwt_data', '')
+  const data = useSessionStorage('jwt-data', '')
   const _data = JSON.parse(unref(data))
   return ref(_data)
 }
@@ -57,7 +57,7 @@ export const useWalletAddress = () => {
 
 /** 获得最大纪元用于生成随机数 */
 export const useMaxEpoch = () => {
-  const epoch = unref(useJwtData())?.getMaxEpoch || 100
+  const epoch = unref(useJwtData())?.maxEpoch || 100
   return ref(epoch as number)
 }
 
@@ -92,8 +92,8 @@ export function getEd25519Keypair() {
  * @returns 
  */
 export async function getPartialZkLoginSignature() {
-  const keyPair = getEd25519Keypair();
-  const extendedEphemeralPublicKey = getExtendedEphemeralPublicKey(keyPair.getPublicKey());
+  const keyPair = getEd25519Keypair()
+  const extendedEphemeralPublicKey = getExtendedEphemeralPublicKey(keyPair.getPublicKey())
   const verificationPayload = {
     jwt: unref(useJwt()),
     extendedEphemeralPublicKey,
@@ -102,7 +102,7 @@ export async function getPartialZkLoginSignature() {
     salt: unref(useSalt()),
     keyClaimName: "sub"
   };
-  return await verifyPartialZkLoginSignature(verificationPayload);
+  return await verifyPartialZkLoginSignature(verificationPayload)
 }
 
 
@@ -112,9 +112,9 @@ export async function getPartialZkLoginSignature() {
  * @returns 
  */
 export async function generateZkLoginSignature(userSignature: string) {
-  const partialZkLoginSignature = await getPartialZkLoginSignature();
-  const addressSeed = getAddressSeed();
-  const maxEpoch = unref(useMaxEpoch());
+  const partialZkLoginSignature = await getPartialZkLoginSignature()
+  const addressSeed = getAddressSeed()
+  const maxEpoch = unref(useMaxEpoch())
   return getZkLoginSignature({
     inputs: {
       ...partialZkLoginSignature,
@@ -137,19 +137,27 @@ async function verifyPartialZkLoginSignature(zkpRequestPayload: any): Promise<Pa
   try {
     const proofResponse = await apiCore(APP_PROVER_URL, {
       method: 'POST',
-      params: {
+      body: {
         ...zkpRequestPayload
       },
       headers: {
         'content-type': 'application/json'
       }
-    });
-    const partialZkLoginSignature = proofResponse.data as unknown as PartialZkLoginSignature;
-    return partialZkLoginSignature;
+    })
+    const partialZkLoginSignature = proofResponse.data as unknown as PartialZkLoginSignature
+    return partialZkLoginSignature
   } catch (error) {
-    console.log("failed to reqeust the partial sig: ", error);
-    return {} as unknown as PartialZkLoginSignature;
+    console.log("failed to reqeust the partial sig: ", error)
+    return {} as unknown as PartialZkLoginSignature
   }
+}
+
+export const getSaltStr = async () => {
+  const arr =  new Uint8Array(16)
+  const newArr = await crypto.getRandomValues(arr)
+  return newArr.reduce((pre, cur) => {
+    return Number(cur).toString(16) + pre
+  }, '')
 }
 
 export const hashcode = (s: string) => {
@@ -157,6 +165,8 @@ export const hashcode = (s: string) => {
   if (l > 0)
     while (i < l)
       h = (h << 5) - h + s.charCodeAt(i++) | 0;
+
+  h = Math.abs(h);
   return h.toString();
 }
 
