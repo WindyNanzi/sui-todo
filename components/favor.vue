@@ -1,7 +1,7 @@
 <script setup>
 import { formatAddress } from '@mysten/sui/utils'
 
-const balance = ref(Number(0).toFixed(2))
+const balance = ref(Number(0).toFixed(4))
 const address = ref('')
 const showAddress = ref('')
 const iconColor = ref('')

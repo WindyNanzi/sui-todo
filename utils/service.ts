@@ -15,7 +15,7 @@ export const emitter = mitt()
  */
 export async function getFormattedBalance(owner: string) {
   const res = await unref(SUI_CLIENT).getBalance({ owner })
-  return Number(Number(res.totalBalance) / 1000_000_000).toFixed(2);
+  return Number(Number(res.totalBalance) / 1000_000_000).toFixed(4);
 }
 
 
@@ -31,7 +31,7 @@ export async function login() {
   })
   const { epoch } = await unref(SUI_CLIENT).getLatestSuiSystemState();
 
-  const maxEpoch = Number(epoch) + 2222;
+  const maxEpoch = Number(epoch) + 10;
   const ephemeralKeyPair = new Ed25519Keypair();
   const randomness = generateRandomness();
   const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
