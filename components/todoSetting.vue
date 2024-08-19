@@ -11,11 +11,12 @@ async function changeENV(val) {
 }
 const dropList = [
   { id: 'main', text: 'Mainnet', handle: () => changeENV('main') },
-  { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
+  // { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
+  { id: 'dev', text: 'Devnet', handle: () => changeENV('dev') },
 ]
 
 const isFaucetENV = computed(() => {
-  return ['test'].includes(unref(currentENV))
+  return ['test', 'dev'].includes(unref(currentENV))
 })
 
 async function getGas() {
