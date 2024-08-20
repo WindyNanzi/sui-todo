@@ -5,8 +5,10 @@ const todoList = ref([])
 
 const updateTodoList = () => {
   getTodoItems().then((list) => {
-    const listMap = list.sort((a, b) => {
-      return Number(b.date) > Number(a.bate)
+    const listMap = list.sort((a, b) => { // sort by width and undo
+      const aOffset = a.undo ? 0 : 5
+      const bOffset = b.undo ? 0 : 5
+      return  (b.width - bOffset) - (a.width - aOffset)
     }).map((item) => {
       const { date: dateTime, id: addr } = item
       const date =  dayjs(Number(dateTime)).format('YYYY-MM-DD')
@@ -28,8 +30,11 @@ const updateTodoList = () => {
 
     const todoItems = Object.keys(listMap).map(key => ({
       key,
-      list: listMap[key]
-    }))
+      list: listMap[key],
+      time: dayjs(key).valueOf()
+    })).sort((a, b) => {  // sort by date
+      return b.time - a.time 
+    })
 
     todoList.value  = todoItems
   }).catch(err => {
