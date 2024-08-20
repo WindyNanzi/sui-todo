@@ -114,6 +114,7 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
     })
   }).catch(err => {
     ElMessage.error(err?.message)
+    return false
   }).finally(() => {
     instance.close()
   })
@@ -121,9 +122,11 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
   
 
 interface TodoItem {
+  id?: string,
   item: string,
   date: number,
   width: number,
+  undo?: boolean,
   background: string,
 }
 
@@ -143,6 +146,82 @@ export async function addTodoItem(params: TodoItem) {
       txb.pure.u64(date),
       txb.pure.u8(width),
       txb.pure.string(background),
+    ]
+  }
+
+  return makeMoveCall(objs, txb)
+}
+
+
+export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
+  const sender = unref(useWalletAddress())
+  const client = unref(SUI_CLIENT)
+  const config = useRuntimeConfig()
+  const packageId = config.public.APP_PACKAGE_ID as string
+  const instance = ElLoading.service({
+    fullscreen: true,
+    text: 'Loading...'
+  })
+
+  return client.getOwnedObjects({
+    owner: sender
+  }).then((ownerObjects) => {
+    const { data = [] } = ownerObjects
+    const ids = data.map((item) => item.data?.objectId!)
+    const options =  { showType: true, showContent: true }
+    return client.multiGetObjects({ ids, options })
+  }).then(objects => {
+    const todoItems = objects.filter(obj => {
+      return obj.data?.type === `${packageId}::todo::ToDo`
+    }).map((item: any) => {
+      return item.data?.content?.fields
+    })
+
+    return todoItems as TodoItem[]
+  }).catch(err => {
+    ElMessage.error(err?.message)
+    return false
+  }).finally(() => {
+    instance.close()
+  })
+}
+
+export async function setTodoItem(params: TodoItem) {
+  const txb = new Transaction()
+  const config = useRuntimeConfig()
+  const packageId = config.public.APP_PACKAGE_ID as string
+  const { item='', date= new Date().getTime(), width=0, background ='', undo = true,  id = '' } = params
+
+  const objs = {
+    package: packageId,
+    module: 'todo',
+    function: 'update',
+    arguments: [
+      txb.pure.string(item),
+      txb.pure.u64(date),
+      txb.pure.u8(width),
+      txb.pure.bool(undo),
+      txb.pure.string(background),
+      txb.object(id),
+    ]
+  }
+
+  return makeMoveCall(objs, txb)
+}
+
+
+
+export async function removeTodoItem(id: string) {
+  const txb = new Transaction()
+  const config = useRuntimeConfig()
+  const packageId = config.public.APP_PACKAGE_ID as string
+  
+  const objs = {
+    package: packageId,
+    module: 'todo',
+    function: 'remove',
+    arguments: [
+      txb.object(id),
     ]
   }
 
