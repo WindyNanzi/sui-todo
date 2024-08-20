@@ -55,12 +55,17 @@ module todo::todo {
     date: u64,
     width: u8,
     background: String,
+    undo: bool,
     todo: &mut ToDo,
   ) {
     todo.item = item;
     todo.date = date;
     todo.width = width;
+    todo.undo = undo;
     todo.background = background;
   }
 
 }
+
+// hash 479VxfVnKPYTcrZtj7tpTEqmNxd5fVyiXzJfK4S22Jg5
+// packageid 0x9b4fa99ee6543ba41ab1cf4b12d5097eb752cdecfaeaba45afa3aa450b696736
