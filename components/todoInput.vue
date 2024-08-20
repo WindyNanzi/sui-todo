@@ -12,7 +12,7 @@ const taskTexts = [
 
 const taskColors = {
   1: '#B0C4DE',
-  2: '#FEEF00',
+  2: '#67C23A',
   3: '#FFA500',
   4: '#FF0F50',
 }
@@ -35,11 +35,21 @@ const add = async () => {
 
   const _width = unref(width)
 
+  const updatePage = () => {
+    emitter.emit('update-balance')
+    emitter.emit('update-todo-list')
+  }
+
   addTodoItem({
     item: _item,
     date,
     width: _width,
     background: '',
+  }).then(() => {
+    item.value = ''
+    updatePage()
+  }).catch(err => {
+    ElMessage.error(err?.message)
   })
 }
 
