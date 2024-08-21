@@ -43,7 +43,7 @@ const taskTexts = [
 ]
 
 const iconPrefix = 'i-line-md-'
-const finishIconName = `${iconPrefix}${props.undo ? 'circle' : 'circle-to-confirm-circle-transition'}`
+const finishIconName = computed(() => `${iconPrefix}${props.undo ? 'circle' : 'circle-to-confirm-circle-transition'}`)
 
 const form = reactive({
   item: props.item,
