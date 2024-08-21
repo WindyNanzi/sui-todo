@@ -1,4 +1,5 @@
 <script setup>
+import { bcs } from '@mysten/sui/bcs';
 import { dayjs } from 'element-plus';
 
 const todoList = ref([])
@@ -11,12 +12,16 @@ const updateTodoList = () => {
       const aOffset = a.undo ? 0 : 5
       const bOffset = b.undo ? 0 : 5
       return  (b.width - bOffset) - (a.width - aOffset)
-    }).map((item) => {
-      const { date: dateTime, id: addr } = item
+    }).map((todo) => {
+      const { date: dateTime, id: addr, item: arr } = todo
       const date =  dayjs(Number(dateTime)).format('YYYY-MM-DD')
       const id = addr.id
+      const u8Arr = new Uint8Array(arr)
+      const item = bcs.string().parse(u8Arr)
+      // console.log(item)
       return {
-        ...item,
+        ...todo,
+        item,
         id,
         date,
       }
@@ -41,6 +46,7 @@ const updateTodoList = () => {
     todoList.value  = todoItems
   }).catch(err => {
     ElMessage.error(err?.message)
+    console.error(err)
   }).finally(() => {
     listLoading.value = false
   })

@@ -6,7 +6,7 @@ module todo::todo {
 
   public struct ToDo has key, store {
     id: UID,
-    item: String,
+    item: vector<u8>,
     date: u64,
     width: u8,
     undo: bool,
@@ -26,7 +26,7 @@ module todo::todo {
   }
 
   public entry fun add (
-    item: String,
+    item: vector<u8>,
     date: u64,
     width: u8,
     background: String,
@@ -51,7 +51,7 @@ module todo::todo {
 
 
   public entry fun update (
-    item: String,
+    item: vector<u8>,
     date: u64,
     width: u8,
     background: String,
