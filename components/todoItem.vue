@@ -148,7 +148,11 @@ function closeDialog() {
     </div>
 
     <div class="operates">
-      <Icon class="remove-icon" name="i-line-md-close" style="color: #FF0F50;" @click="removeItem" />
+      <ElPopconfirm title="Are you sure to delete this?" @confirm="removeItem">
+        <template #reference>
+          <Icon class="remove-icon" name="i-line-md-close" style="color: #FF0F50;" />
+        </template>
+      </ElPopconfirm>
       <Icon class="setting-icon" name="i-line-md-cog" @click="dialogFormVisible = true" />
       <Icon class="undo-icon" :name="finishIconName" @click="setItemUndo" />
     </div>
