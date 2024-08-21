@@ -131,8 +131,7 @@ export async function generateZkLoginSignature(userSignature: string) {
  * @returns 
  */
 async function verifyPartialZkLoginSignature(zkpRequestPayload: any): Promise<PartialZkLoginSignature> {
-  try {
-    const proofResponse = await apiCore(APP_PROVER_URL, {
+    const { data: proofResponse, error, status } = await apiCore(APP_PROVER_URL, {
       method: 'POST',
       body: {
         ...zkpRequestPayload
@@ -141,12 +140,13 @@ async function verifyPartialZkLoginSignature(zkpRequestPayload: any): Promise<Pa
         'content-type': 'application/json'
       }
     })
-    const partialZkLoginSignature = proofResponse.data as unknown as PartialZkLoginSignature
+
+    if(unref(status) === 'error') {
+      throw Error(unref(error)?.message)
+    }
+
+    const partialZkLoginSignature = proofResponse as unknown as PartialZkLoginSignature
     return unref(partialZkLoginSignature)
-  } catch (error) {
-    console.log("failed to reqeust the partial sig: ", error)
-    return {} as unknown as PartialZkLoginSignature
-  }
 }
 
 export const getSaltStr = async () => {
