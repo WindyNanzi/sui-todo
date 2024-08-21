@@ -2,8 +2,10 @@
 import { dayjs } from 'element-plus';
 
 const todoList = ref([])
+const listLoading = ref(false)
 
 const updateTodoList = () => {
+  listLoading.value = true
   getTodoItems().then((list) => {
     const listMap = list.sort((a, b) => { // sort by width and undo
       const aOffset = a.undo ? 0 : 5
@@ -39,18 +41,21 @@ const updateTodoList = () => {
     todoList.value  = todoItems
   }).catch(err => {
     ElMessage.error(err?.message)
+  }).finally(() => {
+    listLoading.value = false
   })
 }
 
 onMounted(() => {
   updateTodoList()
   emitter.on('update-todo-list', () => updateTodoList())
+  emitter.on('update-list-loading', (val) => listLoading.value = val)
 })
 </script>
 
 <template>
   <main class="main">
-    <div class="todo-list">
+    <div class="todo-list" v-loading="listLoading">
       <ElTimeline>
         <ElTimelineItem v-for="item in todoList" :key="item.key" :timestamp="item.key" placement="top"> 
           <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />

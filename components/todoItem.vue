@@ -63,6 +63,8 @@ const rules = {
 
 
 const dialogFormVisible = ref(false)
+const itemLoading = ref(false)
+
 const date = dayjs(props.date).valueOf()
 
 const updatePage = () => {
@@ -70,7 +72,10 @@ const updatePage = () => {
   emitter.emit('update-todo-list')
 }
 
+// const updateListLoading = val => emitter.emit('update-list-loading', val)
+
 const setItemUndo = async () => {
+  itemLoading.value = true
   const undo = !props.undo
   setTodoItem({
     item: props.item,
@@ -84,11 +89,14 @@ const setItemUndo = async () => {
     updatePage()
   }).catch(err => {
     ElMessage.error(err?.message)
+  }).finally(() => {
+    itemLoading.value = false
   })
 }
 
 
 const setItem = async () => {
+  itemLoading.value = true
   dialogFormVisible.value = false
   setTodoItem({
     item: form.item,
@@ -101,15 +109,20 @@ const setItem = async () => {
     updatePage()
   }).catch(err => {
     ElMessage.error(err?.message)
+  }).finally(() => {
+    itemLoading.value = false
   })
 }
 
 
 const removeItem = async () => {
+  itemLoading.value = true
   removeTodoItem(props.id).then(res => {
     updatePage()
   }).catch(err => {
     ElMessage.error(err?.message)
+  }).finally(() => {
+    itemLoading.value = false
   })
 }
 
@@ -125,7 +138,7 @@ const closeDialog = () => {
 </script>
 
 <template>
-  <div :class="['todo-item', { 'is-finish': !undo }]">
+  <div :class="['todo-item', { 'is-finish': !undo }]" v-loading="itemLoading" element-loading-custom-class="loading">
     <div class="item-content">
       <ElText truncated :style="{ color: taskColors[width] }">{{ item }}</ElText>
     </div>
@@ -212,6 +225,14 @@ const closeDialog = () => {
 
   .iconify {
     cursor: pointer;
+  }
+}
+
+:deep(.loading) {
+  background-color: transparent;
+  // filter: blur(1px);
+  .circular {
+    width: 25px;
   }
 }
 </style>

@@ -88,10 +88,7 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
   const keypairs = getEd25519Keypair()
   const sender = unref(useWalletAddress())
   let tmpBytes = ''
-  const instance = ElLoading.service({
-    fullscreen: true,
-    text: 'Loading...',
-  })
+
   txb.setGasBudget(1_000_000_000)
   txb.setSender(sender)
   txb.moveCall(txtData)
@@ -112,11 +109,6 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
         showEvents: true,
       }
     })
-  }).catch(err => {
-    ElMessage.error(err?.message)
-    return false
-  }).finally(() => {
-    instance.close()
   })
 }
   
@@ -158,10 +150,6 @@ export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
   const client = unref(SUI_CLIENT)
   const config = useRuntimeConfig()
   const packageId = config.public.APP_PACKAGE_ID as string
-  const instance = ElLoading.service({
-    fullscreen: true,
-    text: 'Loading...'
-  })
 
   return client.getOwnedObjects({
     owner: sender
@@ -178,11 +166,6 @@ export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
     })
 
     return todoItems as TodoItem[]
-  }).catch(err => {
-    ElMessage.error(err?.message)
-    return false
-  }).finally(() => {
-    instance.close()
   })
 }
 
