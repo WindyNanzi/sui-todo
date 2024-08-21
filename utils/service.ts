@@ -2,13 +2,8 @@ import { generateNonce, generateRandomness } from "@mysten/zklogin"
 import { Transaction } from '@mysten/sui/transactions'
 import { apiCore } from "./api"
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
-import mitt from 'mitt'
+import { bcs } from "@mysten/sui/bcs"
 
-
-export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('dev')
-export const SUI_CURRENT_NODE_URL = computed(() => unref(useFullNodeUrl(unref(SUI_CURRENT_ENV)))) 
-export const SUI_CLIENT = computed(() => unref(useClient(unref(SUI_CURRENT_NODE_URL)))) 
-export const emitter = mitt()
 
 /** 
  * 获取 Balance
@@ -20,10 +15,7 @@ export async function getFormattedBalance(owner: string) {
 
 
 export async function login() {
-  const config = useRuntimeConfig()
   const client = unref(SUI_CLIENT)
-  const GOOGLE_CLIENT_ID = config.public.GOOGLE_CLIENT_ID as string
-  const APP_REDIRECT_URL = config.public.APP_REDIRECT_URL as string
 
   const instance = ElLoading.service({
     fullscreen: true,
@@ -132,8 +124,7 @@ interface TodoItem {
 
 export async function addTodoItem(params: TodoItem) {
   const txb = new Transaction()
-  const config = useRuntimeConfig()
-  const packageId = config.public.APP_PACKAGE_ID as string
+  const packageId = unref(PACKAGE_ID)
   const { item='', date= new Date().getTime(), width=0, background ='' } = params
   
   const objs = {
@@ -141,7 +132,7 @@ export async function addTodoItem(params: TodoItem) {
     module: 'todo',
     function: 'add',
     arguments: [
-      txb.pure.string(item),
+      txb.pure.vector('u8', bcs.string().serialize(item).toBytes()),
       txb.pure.u64(date),
       txb.pure.u8(width),
       txb.pure.string(background),
@@ -155,8 +146,7 @@ export async function addTodoItem(params: TodoItem) {
 export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
   const sender = unref(useWalletAddress())
   const client = unref(SUI_CLIENT)
-  const config = useRuntimeConfig()
-  const packageId = config.public.APP_PACKAGE_ID as string
+  const packageId = unref(PACKAGE_ID)
 
   return client.getOwnedObjects({
     owner: sender
@@ -178,8 +168,7 @@ export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
 
 export async function setTodoItem(params: TodoItem) {
   const txb = new Transaction()
-  const config = useRuntimeConfig()
-  const packageId = config.public.APP_PACKAGE_ID as string
+  const packageId = unref(PACKAGE_ID)
   const { item='', date= new Date().getTime(), width=0, background ='', undo = true,  id = '' } = params
 
   const objs = {
@@ -203,8 +192,7 @@ export async function setTodoItem(params: TodoItem) {
 
 export async function removeTodoItem(id: string) {
   const txb = new Transaction()
-  const config = useRuntimeConfig()
-  const packageId = config.public.APP_PACKAGE_ID as string
+  const packageId = unref(PACKAGE_ID)
   
   const objs = {
     package: packageId,

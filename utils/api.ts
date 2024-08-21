@@ -5,7 +5,6 @@
  * @returns 
  */
 export const apiCore = (url: string, params:any) => {
-  const config = useRuntimeConfig()
   const app = useNuxtApp()
 
   return useFetch(url, {
