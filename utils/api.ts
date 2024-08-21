@@ -11,18 +11,12 @@ export const apiCore = (url: string, params:any) => {
     baseURL: '',
     ...params,
     onRequest({ options }) {
-      let token = ''
-      // 使用 pinia 持久化插件后，使用 cookie 进行的持久化，则无需客户端判断
-      if (import.meta.client) {
-        token = localStorage.getItem('token') || ''
-      }
       options.headers = {
         // Authorization: `Bearer ${token}`,
         ...options.headers
       }
     },
     onResponse({ response }){
-      // console.log(response)
     },
     // 响应出现问题的时候，目前这部分仅仅用于模拟
     onRequestError({ error }) {
@@ -41,7 +35,7 @@ export const apiCore = (url: string, params:any) => {
           })
         })
       }
-    }
+    },
   })
 }
 

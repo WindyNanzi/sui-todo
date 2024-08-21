@@ -19,8 +19,18 @@ const isFaucetENV = computed(() => {
   return ['test', 'dev'].includes(unref(currentENV))
 })
 
+
+const gasLoading = ref(false)
+
 async function getGas() {
-  emitter.emit('update-balance', true)
+  const address = unref(useWalletAddress())
+  gasLoading.value = true
+  const { status, error } = await getFeesByAddress(address)
+  gasLoading.value = false
+  if(unref(status) === 'error') {
+    return ElMessage.error(unref(error)?.message)
+  }
+  emitter.emit('update-balance')
 }
 </script>
 
@@ -47,11 +57,11 @@ async function getGas() {
         </div>
 
         <ElDivider v-show="isFaucetENV" />
-        <div v-show="isFaucetENV" class="popper-item" @click="getGas">
+        <div v-show="isFaucetENV" class="popper-item" @click="getGas" v-loading="gasLoading">
           <div class="badge-box" />
           <div class="text-box">
             <span> Get fees </span>
-            <Icon class="text-box-icon" name="i-line-md-coffee-loop" />
+            <Icon class="text-box-icon" name="i-line-md-coffee-half-empty-twotone-loop" />
           </div>
         </div>
 

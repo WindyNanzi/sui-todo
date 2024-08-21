@@ -24,18 +24,10 @@ function copy() {
       }, 1000)
     })
 }
-async function updateBalance(isNeedGas = false) {
+async function updateBalance() {
   balanceLoading.value = true
-  const p = Promise.resolve()
-  if (isNeedGas) {
-    p.then(() => {
-      return getFeesByAddress(unref(address))
-    })
-  }
-
-  p.then(() => {
-    return getFormattedBalance(unref(address))
-  }).then((res) => {
+ 
+ getFormattedBalance(unref(address)).then((res) => {
     balance.value = res
   }).catch((err) => {
     ElMessage.error(err)

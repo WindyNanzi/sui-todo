@@ -68,8 +68,7 @@ export async function getFeesByAddress(address: string) {
         recipient: address
       }
     }), 
-  }).then(res => res?.data)
-  .catch(err => ElMessage.error(err))
+  })
 }
 
 
