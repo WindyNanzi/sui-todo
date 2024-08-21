@@ -5,6 +5,7 @@ import { dayjs } from 'element-plus'
 const todoList = ref([])
 const listLoading = ref(false)
 const showMore = ref(false)
+const lock = ref(false) // 设置 todo-item operate 的 lock 状态，防止频繁点击报错
 
 function generateSortList(list) {
   const listMap = list.reduce((pre, cur) => {
@@ -81,6 +82,7 @@ onMounted(() => {
   updateTodoList()
   emitter.on('update-todo-list', () => updateTodoList())
   emitter.on('update-list-loading', val => listLoading.value = val)
+  emitter.on('update-todo-item-operate-lock-status', val => lock.value = val)
 })
 
 onUnmounted(() => {
@@ -90,7 +92,7 @@ onUnmounted(() => {
 
 <template>
   <main class="main">
-    <div v-loading="listLoading" class="todo-list">
+    <div v-loading="listLoading" class="todo-list" :class="[{ 'is-lock': lock }]">
       <ElTimeline>
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
           <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />
@@ -143,5 +145,13 @@ main {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+.is-lock {
+  :deep(.todo-item) {
+    .remove-icon, .undo-icon {
+      pointer-events: none;
+    }
+  }
 }
 </style>

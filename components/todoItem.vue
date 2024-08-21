@@ -74,7 +74,9 @@ function updatePage() {
 
 async function setItemUndo() {
   itemLoading.value = true
+  emitter.emit('update-todo-item-operate-lock-status', true)
   const undo = !props.undo
+
   setTodoItem({
     item: props.item,
     date,
@@ -83,18 +85,20 @@ async function setItemUndo() {
     background: props.background,
     id: props.id,
   }).then((res) => {
-    if (!res) { return }
     updatePage()
   }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     itemLoading.value = false
+    emitter.emit('update-todo-item-operate-lock-status', false)
   })
 }
 
 async function setItem() {
   itemLoading.value = true
+  emitter.emit('update-todo-item-operate-lock-status', true)
   dialogFormVisible.value = false
+
   setTodoItem({
     item: form.item,
     date,
@@ -108,17 +112,21 @@ async function setItem() {
     ElMessage.error(err?.message)
   }).finally(() => {
     itemLoading.value = false
+    emitter.emit('update-todo-item-operate-lock-status', false)
   })
 }
 
 async function removeItem() {
   itemLoading.value = true
+  emitter.emit('update-todo-item-operate-lock-status', true)
+
   removeTodoItem(props.id).then((res) => {
     updatePage()
   }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     itemLoading.value = false
+    emitter.emit('update-todo-item-operate-lock-status', false)
   })
 }
 
@@ -140,8 +148,8 @@ function closeDialog() {
     </div>
 
     <div class="operates">
-      <Icon name="i-line-md-close" style="color: #FF0F50;" @click="removeItem" />
-      <Icon name="i-line-md-cog" @click="dialogFormVisible = true" />
+      <Icon class="remove-icon" name="i-line-md-close" style="color: #FF0F50;" @click="removeItem" />
+      <Icon class="setting-icon" name="i-line-md-cog" @click="dialogFormVisible = true" />
       <Icon class="undo-icon" :name="finishIconName" @click="setItemUndo" />
     </div>
   </div>
