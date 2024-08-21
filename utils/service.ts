@@ -103,10 +103,18 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
       transactionBlock: tmpBytes,
       signature: res,
       options: {
-        showBalanceChanges: true,
-        showEvents: true,
-      }
+        showEffects: true,
+      },
+      
     })
+  }).then(res => {
+    const {status = 'success', error = '' }  = res.effects?.status!
+    
+    if(status === 'failure' ) {
+      return ElMessage.error(error)
+    }
+
+    return res
   })
 }
   
@@ -181,8 +189,8 @@ export async function setTodoItem(params: TodoItem) {
       txb.pure.string(item),
       txb.pure.u64(date),
       txb.pure.u8(width),
-      txb.pure.bool(undo),
       txb.pure.string(background),
+      txb.pure.bool(undo),
       txb.object(id),
     ]
   }
