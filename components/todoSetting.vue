@@ -19,7 +19,6 @@ const isFaucetENV = computed(() => {
   return ['test', 'dev'].includes(unref(currentENV))
 })
 
-
 const gasLoading = ref(false)
 
 async function getGas() {
@@ -27,7 +26,7 @@ async function getGas() {
   gasLoading.value = true
   const { status, error } = await getFeesByAddress(address)
   gasLoading.value = false
-  if(unref(status) === 'error') {
+  if (unref(status) === 'error') {
     return ElMessage.error(unref(error)?.message)
   }
   emitter.emit('update-balance')
@@ -57,7 +56,7 @@ async function getGas() {
         </div>
 
         <ElDivider v-show="isFaucetENV" />
-        <div v-show="isFaucetENV" class="popper-item" @click="getGas" v-loading="gasLoading">
+        <div v-show="isFaucetENV" v-loading="gasLoading" class="popper-item" @click="getGas">
           <div class="badge-box" />
           <div class="text-box">
             <span> Get fees </span>
