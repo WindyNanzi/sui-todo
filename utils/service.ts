@@ -21,48 +21,46 @@ export async function getFormattedBalance(owner: string) {
 
 export async function login() {
   const config = useRuntimeConfig()
+  const client = unref(SUI_CLIENT)
   const GOOGLE_CLIENT_ID = config.public.GOOGLE_CLIENT_ID as string
   const APP_REDIRECT_URL = config.public.APP_REDIRECT_URL as string
-  const APP_OPENID_PROVIDER_URL = config.public.APP_OPENID_PROVIDER_URL as string
 
   const instance = ElLoading.service({
     fullscreen: true,
     text: 'Loading...',
   })
-  const { epoch } = await unref(SUI_CLIENT).getLatestSuiSystemState();
 
-  const maxEpoch = Number(epoch) + 10;
-  const ephemeralKeyPair = new Ed25519Keypair();
-  const randomness = generateRandomness();
-  const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
-  const jwtData = {
-    maxEpoch,
-    nonce,
-    randomness,
-    ephemeralKeyPair,
-  };
+  return client.getLatestSuiSystemState()
+    .then(({ epoch }) => {
+      const maxEpoch = Number(epoch) + 10;
+      const ephemeralKeyPair = new Ed25519Keypair();
+      const randomness = generateRandomness();
+      const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
+      const jwtData = {
+        maxEpoch,
+        nonce,
+        randomness,
+        ephemeralKeyPair,
+      };
 
+      sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
+      const params = new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        redirect_uri: APP_REDIRECT_URL,
+        response_type: 'id_token',
+        scope: 'openid email',
+        nonce: nonce,
+      });
 
-  sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
-
-  const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: APP_REDIRECT_URL,
-    response_type: 'id_token',
-    scope: 'openid email',
-    nonce: nonce,
-  });
-
-  try {
-    const { data } = await apiCore(APP_OPENID_PROVIDER_URL, {}) as { data: any };
-    const authUrl = `${unref(data)?.authorization_endpoint}?${params}`;
-    nextTick(() => instance.close())
-    window.location.href = authUrl;
-  } catch (error: any) {
-    ElMessage.error('Error initiating Google login:', error?.message);
-  } finally {
-    nextTick(() => instance.close())
-  }
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params}`
+      window.location.href = authUrl;
+    }).catch(error => {
+      ElMessage.error('Error initiating Google login:', error?.message);
+    }).finally(() => {
+      setTimeout(() => {
+        instance.close()
+      }, 500)
+    })
 }
 
 export async function getFeesByAddress(address: string) {
