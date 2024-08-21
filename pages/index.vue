@@ -50,7 +50,7 @@ function updateTodoList() {
         date,
       }
     })
-    
+
     todoList.value = tempList
   }).catch((err) => {
     ElMessage.error(err?.message)
@@ -65,16 +65,17 @@ const needShowMore = computed(() => unref(todoList).length >= 10)
 const showList = computed(() => {
   const show = unref(showMore)
   const list = unref(todoList)
-  if(show) {
+  if (show) {
     return generateSortList(list)
-  } else {
-    const items =  list.slice(0, 10)
+  }
+  else {
+    const items = list.slice(0, 10)
     return generateSortList(items)
   }
 })
 
 onMounted(() => {
-  if(!unref(useIsAuthenticated())) {
+  if (!unref(useIsAuthenticated())) {
     return navigateTo('/login')
   }
   updateTodoList()
@@ -98,11 +99,11 @@ onUnmounted(() => {
       <ElDivider v-if="needShowMore" border-style="dashed">
         <div class="divide-center-box" @click="showMore = !showMore">
           <ElIcon v-show="showMore">
-            <ElIconArrowUp  />
+            <ElIconArrowUp />
           </ElIcon>
           <ElText> {{ !showMore ? 'show more' : 'collapse' }} </ElText>
           <ElIcon v-show="!showMore">
-            <ElIconArrowDown  />
+            <ElIconArrowDown />
           </ElIcon>
         </div>
       </ElDivider>
