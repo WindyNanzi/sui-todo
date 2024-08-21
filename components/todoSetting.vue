@@ -31,6 +31,13 @@ async function getGas() {
   }
   emitter.emit('update-balance')
 }
+
+async function logout() {
+  sessionStorage.setItem('jwt-data', '')
+  sessionStorage.setItem('sui-jwt-token', '')
+  emitter.emit('refuse-header-status')
+  navigateTo('/login')
+}
 </script>
 
 <template>
@@ -65,7 +72,7 @@ async function getGas() {
         </div>
 
         <ElDivider />
-        <div class="popper-item">
+        <div class="popper-item" @click="logout">
           <div class="badge-box" />
           <div class="text-box">
             <span> Logout </span>

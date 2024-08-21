@@ -58,6 +58,10 @@ onMounted(() => {
   emitter.on('update-todo-list', () => updateTodoList())
   emitter.on('update-list-loading', val => listLoading.value = val)
 })
+
+onUnmounted(() => {
+  emitter.off('*')
+})
 </script>
 
 <template>

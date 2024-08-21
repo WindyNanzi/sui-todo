@@ -2,6 +2,7 @@
 const onlySwitch = ref(true)
 onMounted(() => {
   onlySwitch.value = !unref(useIsAuthenticated())
+  emitter.on('refuse-header-status', () => onlySwitch.value = !unref(useIsAuthenticated()))
 })
 </script>
 
