@@ -74,6 +74,9 @@ const showList = computed(() => {
 })
 
 onMounted(() => {
+  if(!unref(useIsAuthenticated())) {
+    return navigateTo('/login')
+  }
   updateTodoList()
   emitter.on('update-todo-list', () => updateTodoList())
   emitter.on('update-list-loading', val => listLoading.value = val)
@@ -121,7 +124,7 @@ main {
 
 .todo-list {
   width: 80%;
-  max-height: 600px;
+  height: calc(100vh - 200px);
   padding-right: 10px;
   overflow-y: auto;
 }
