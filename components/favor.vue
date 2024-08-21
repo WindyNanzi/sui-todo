@@ -26,8 +26,8 @@ function copy() {
 }
 async function updateBalance() {
   balanceLoading.value = true
- 
- getFormattedBalance(unref(address)).then((res) => {
+
+  getFormattedBalance(unref(address)).then((res) => {
     balance.value = res
   }).catch((err) => {
     ElMessage.error(err)
@@ -64,7 +64,7 @@ onMounted(async () => {
         </ElText>
         <Icon class="copy-icon" :name="`i-line-md-${copyIconName}`" :style="{ color: iconColor }" @click="copy" />
       </div>
-      <div class="balance">
+      <div class="balance" @click="updateBalance">
         <ElText size="small" type="info">
           balance {{ balance }} SUI
         </ElText>
@@ -102,5 +102,9 @@ onMounted(async () => {
   &:hover {
     cursor: pointer;
   }
+}
+
+.balance {
+  cursor: pointer;
 }
 </style>
