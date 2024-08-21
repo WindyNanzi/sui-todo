@@ -1,5 +1,5 @@
 <script setup>
-import { dayjs } from 'element-plus';
+import { dayjs } from 'element-plus'
 
 const item = ref('')
 const width = ref(1)
@@ -20,18 +20,17 @@ const taskColors = {
 const todoDateOffset = ref(0)
 const loading = ref(false)
 
-const updatePage = () => {
+function updatePage() {
   emitter.emit('update-balance')
   emitter.emit('update-todo-list')
 }
 
-const add = async () => {
+async function add() {
   const _item = unref(item)
-  if(_item.trim() === '') {
+  if (_item.trim() === '') {
     return
   }
 
-  
   // date
   const offset = unref(todoDateOffset)
   const now = dayjs().add(offset, 'day')
@@ -40,7 +39,6 @@ const add = async () => {
 
   const _width = unref(width)
 
-  
   loading.value = true
   addTodoItem({
     item: _item,
@@ -50,33 +48,32 @@ const add = async () => {
   }).then(() => {
     item.value = ''
     updatePage()
-  }).catch(err => {
+  }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     loading.value = false
   })
 }
-
 </script>
 
 <template>
-  <div class="todo-item-box" v-loading="loading">
+  <div v-loading="loading" class="todo-item-box">
     <div class="todo-props">
       <ElRate v-model="width" :max="4" show-text :texts="taskTexts" :colors="taskColors" />
 
       <ElRadioGroup v-model="todoDateOffset" size="small">
-        <ElRadioButton label="today" :value="0"></ElRadioButton>
-        <ElRadioButton label="tomorrow" :value="1"></ElRadioButton>
+        <ElRadioButton label="today" :value="0" />
+        <ElRadioButton label="tomorrow" :value="1" />
       </ElRadioGroup>
     </div>
-    <ElInput 
-      class="todo-item-input" 
+    <ElInput
       v-model="item"
+      class="todo-item-input"
       maxlength="150"
       show-word-limit
-      @keydown.enter="add"
       clearable
       placeholder="add todo item"
+      @keydown.enter="add"
     >
       <template #prefix>
         <Icon name="i-line-md-plus" style="font-size: 20px;" />

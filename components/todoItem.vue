@@ -1,5 +1,5 @@
 <script setup>
-import { dayjs } from 'element-plus';
+import { dayjs } from 'element-plus'
 
 const props = defineProps({
   id: {
@@ -12,7 +12,7 @@ const props = defineProps({
   },
   undo: {
     type: Boolean,
-    default: true
+    default: true,
   },
   width: {
     type: Number,
@@ -20,12 +20,12 @@ const props = defineProps({
   },
   item: {
     type: String,
-    default: ''
+    default: '',
   },
   background: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const taskColors = {
@@ -53,28 +53,26 @@ const form = reactive({
   date: props.date,
 })
 
-
-const rules = { 
+const rules = {
   name: [
     { required: true, message: 'Please input Todo Item', trigger: 'blur' },
     { min: 1, max: 150, message: 'Length should be 1 to 150', trigger: 'blur' },
-  ], 
+  ],
 }
-
 
 const dialogFormVisible = ref(false)
 const itemLoading = ref(false)
 
 const date = dayjs(props.date).valueOf()
 
-const updatePage = () => {
+function updatePage() {
   emitter.emit('update-balance')
   emitter.emit('update-todo-list')
 }
 
 // const updateListLoading = val => emitter.emit('update-list-loading', val)
 
-const setItemUndo = async () => {
+async function setItemUndo() {
   itemLoading.value = true
   const undo = !props.undo
   setTodoItem({
@@ -85,17 +83,16 @@ const setItemUndo = async () => {
     background: props.background,
     id: props.id,
   }).then((res) => {
-    if(!res) { return }
+    if (!res) { return }
     updatePage()
-  }).catch(err => {
+  }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     itemLoading.value = false
   })
 }
 
-
-const setItem = async () => {
+async function setItem() {
   itemLoading.value = true
   dialogFormVisible.value = false
   setTodoItem({
@@ -105,60 +102,58 @@ const setItem = async () => {
     width: form.width,
     background: '',
     id: props.id,
-  }).then(res => {
+  }).then((res) => {
     updatePage()
-  }).catch(err => {
+  }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     itemLoading.value = false
   })
 }
 
-
-const removeItem = async () => {
+async function removeItem() {
   itemLoading.value = true
-  removeTodoItem(props.id).then(res => {
+  removeTodoItem(props.id).then((res) => {
     updatePage()
-  }).catch(err => {
+  }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     itemLoading.value = false
   })
 }
 
-
-const closeDialog = () => {
+function closeDialog() {
   dialogFormVisible.value = false
   form.item = props.item
   form.undo = props.undo
   form.background = props.background
   form.width = props.width
 }
-
 </script>
 
 <template>
-  <div :class="['todo-item', { 'is-finish': !undo }]" v-loading="itemLoading" element-loading-custom-class="loading">
+  <div v-loading="itemLoading" class="todo-item" :class="[{ 'is-finish': !undo }]" element-loading-custom-class="loading">
     <div class="item-content">
-      <ElText truncated :style="{ color: taskColors[width] }">{{ item }}</ElText>
+      <ElText truncated :style="{ color: taskColors[width] }">
+        {{ item }}
+      </ElText>
     </div>
 
     <div class="operates">
       <Icon name="i-line-md-close" style="color: #FF0F50;" @click="removeItem" />
       <Icon name="i-line-md-cog" @click="dialogFormVisible = true" />
-      <Icon class="undo-icon" :name="finishIconName"  @click="setItemUndo" />
+      <Icon class="undo-icon" :name="finishIconName" @click="setItemUndo" />
     </div>
   </div>
 
-
   <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500">
-    <ElForm :model="form"  :rules="rules">
+    <ElForm :model="form" :rules="rules">
       <ElFormItem>
-        <ElInput 
-          v-model="form.item" 
-          placeholder="add todo item" 
-          maxlength="150" 
-          show-word-limit  
+        <ElInput
+          v-model="form.item"
+          placeholder="add todo item"
+          maxlength="150"
+          show-word-limit
           clearable
           type="textarea"
           :rows="3"
@@ -168,17 +163,19 @@ const closeDialog = () => {
         <ElRate v-model="form.width" :max="4" show-text :texts="taskTexts" :colors="taskColors" />
       </ElFormItem>
       <ElFormItem>
-        <ElSwitch 
+        <ElSwitch
           :model-value="!form.undo"
-          active-text="Done" 
-          inactive-text="Undone" 
-          @change="val => form.undo = !val" 
+          active-text="Done"
+          inactive-text="Undone"
+          @change="val => form.undo = !val"
         />
       </ElFormItem>
     </ElForm>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeDialog">Cancel</el-button>
+        <el-button @click="closeDialog">
+          Cancel
+        </el-button>
         <el-button type="primary" @click="setItem">
           Confirm
         </el-button>
