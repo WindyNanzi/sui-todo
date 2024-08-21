@@ -37,6 +37,7 @@ html {
   height: 100%;
 
 }
+
 body {
   margin: 0;
   height: 100%;
@@ -44,5 +45,25 @@ body {
 
 :focus-visible {
   outline: none;
+}
+
+/* 隐藏默认滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  /* 滚动条宽度 */
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  /* 轨道背景透明 */
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.4);
+  /* 半透明的深灰色 */
+  border-radius: 3px;
+  /* 边框圆角 */
 }
 </style>

@@ -1,11 +1,16 @@
 <script setup>
-
+const showSkeleton = ref(true)
 </script>
 
 <template>
   <div class="login-box">
     <div class="container">
-      <ElImage class="post-image" src="/plan.jpg" />
+      <ElSkeleton v-if="showSkeleton" animated>
+        <template #template>
+          <ElSkeletonItem class="post-image" variant="image" />
+        </template>
+      </ElSkeleton>
+      <ElImage v-show="!showSkeleton" class="post-image" src="/plan.jpg" @load="showSkeleton = false" />
 
       <PlatformList />
     </div>
@@ -32,7 +37,7 @@
 .post-image {
   width: 700px;
   height: 468px;
-  filter: blur(4px);
+  // filter: blur(4px);
   border-radius: 10px;
   transform: translateY(-50px);
 }

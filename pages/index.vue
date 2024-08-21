@@ -67,6 +67,7 @@ onUnmounted(() => {
 <template>
   <main class="main">
     <div v-loading="listLoading" class="todo-list">
+      <el-skeleton v-show="todoList.length === 0" :rows="10" animated />
       <ElTimeline>
         <ElTimelineItem v-for="item in todoList" :key="item.key" :timestamp="item.key" placement="top">
           <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />
@@ -90,6 +91,7 @@ main {
 .todo-list {
   width: 80%;
   max-height: 600px;
+  padding-right: 10px;
   overflow-y: auto;
 }
 
