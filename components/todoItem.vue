@@ -229,8 +229,6 @@ const closeDialog = () => {
 }
 
 :deep(.loading) {
-  background-color: transparent;
-  // filter: blur(1px);
   .circular {
     width: 25px;
   }
