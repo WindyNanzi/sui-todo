@@ -18,7 +18,12 @@ const taskColors = {
 }
 
 const todoDateOffset = ref(0)
+const loading = ref(false)
 
+const updatePage = () => {
+  emitter.emit('update-balance')
+  emitter.emit('update-todo-list')
+}
 
 const add = async () => {
   const _item = unref(item)
@@ -35,11 +40,8 @@ const add = async () => {
 
   const _width = unref(width)
 
-  const updatePage = () => {
-    emitter.emit('update-balance')
-    emitter.emit('update-todo-list')
-  }
-
+  
+  loading.value = true
   addTodoItem({
     item: _item,
     date,
@@ -50,13 +52,15 @@ const add = async () => {
     updatePage()
   }).catch(err => {
     ElMessage.error(err?.message)
+  }).finally(() => {
+    loading.value = false
   })
 }
 
 </script>
 
 <template>
-  <div class="todo-item-box">
+  <div class="todo-item-box" v-loading="loading">
     <div class="todo-props">
       <ElRate v-model="width" :max="4" show-text :texts="taskTexts" :colors="taskColors" />
 
