@@ -111,7 +111,8 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
     const {status = 'success', error = '' }  = res.effects?.status!
     
     if(status === 'failure' ) {
-      return ElMessage.error(error)
+      emitter.emit('update-balance')
+      throw new Error(error)
     }
 
     return res
