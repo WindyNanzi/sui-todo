@@ -4,11 +4,35 @@ import { dayjs } from 'element-plus'
 
 const todoList = ref([])
 const listLoading = ref(false)
+const showMore = ref(false)
+
+function generateSortList(list) {
+  const listMap = list.reduce((pre, cur) => {
+    const { date } = cur
+    if (pre[date]) {
+      pre[date].push(cur)
+    }
+    else {
+      pre[date] = [cur]
+    }
+    return pre
+  }, {})
+
+  const items = Object.keys(listMap).map(key => ({
+    key,
+    list: listMap[key],
+    time: dayjs(key).valueOf(),
+  })).sort((a, b) => { // sort by date
+    return b.time - a.time
+  })
+
+  return items
+}
 
 function updateTodoList() {
   listLoading.value = true
   getTodoItems().then((list) => {
-    const listMap = list.sort((a, b) => { // sort by width and undo
+    const tempList = list.sort((a, b) => { // sort by width and undo
       const aOffset = a.undo ? 0 : 5
       const bOffset = b.undo ? 0 : 5
       return (b.width - bOffset) - (a.width - aOffset)
@@ -25,26 +49,9 @@ function updateTodoList() {
         id,
         date,
       }
-    }).reduce((pre, cur) => {
-      const { date } = cur
-      if (pre[date]) {
-        pre[date].push(cur)
-      }
-      else {
-        pre[date] = [cur]
-      }
-      return pre
-    }, {})
-
-    const todoItems = Object.keys(listMap).map(key => ({
-      key,
-      list: listMap[key],
-      time: dayjs(key).valueOf(),
-    })).sort((a, b) => { // sort by date
-      return b.time - a.time
     })
-
-    todoList.value = todoItems
+    
+    todoList.value = tempList
   }).catch((err) => {
     ElMessage.error(err?.message)
     console.error(err)
@@ -52,6 +59,19 @@ function updateTodoList() {
     listLoading.value = false
   })
 }
+
+const needShowMore = computed(() => unref(todoList).length >= 10)
+
+const showList = computed(() => {
+  const show = unref(showMore)
+  const list = unref(todoList)
+  if(show) {
+    return generateSortList(list)
+  } else {
+    const items =  list.slice(0, 10)
+    return generateSortList(items)
+  }
+})
 
 onMounted(() => {
   updateTodoList()
@@ -69,10 +89,21 @@ onUnmounted(() => {
     <div v-loading="listLoading" class="todo-list">
       <el-skeleton v-show="todoList.length === 0" :rows="10" animated />
       <ElTimeline>
-        <ElTimelineItem v-for="item in todoList" :key="item.key" :timestamp="item.key" placement="top">
+        <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
           <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />
         </ElTimelineItem>
       </ElTimeline>
+      <ElDivider v-if="needShowMore" border-style="dashed">
+        <div class="divide-center-box" @click="showMore = !showMore">
+          <ElIcon v-show="showMore">
+            <ElIconArrowUp  />
+          </ElIcon>
+          <ElText> {{ !showMore ? 'show more' : 'collapse' }} </ElText>
+          <ElIcon v-show="!showMore">
+            <ElIconArrowDown  />
+          </ElIcon>
+        </div>
+      </ElDivider>
     </div>
     <div class="input-container">
       <TodoInput />
@@ -101,5 +132,13 @@ main {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.divide-center-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 </style>
