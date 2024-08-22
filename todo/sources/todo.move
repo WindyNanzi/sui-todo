@@ -1,8 +1,11 @@
 #[allow(duplicate_alias)]
 module todo::todo {
   use std::ascii::String;
+  use std::vector;
   use sui::object;
   use sui::transfer;
+
+  const ETooLongString :u64 = 0;
 
   public struct ToDo has key, store {
     id: UID,
@@ -32,6 +35,8 @@ module todo::todo {
     background: String,
     ctx: &mut TxContext
   ) {
+    assert!(vector::length(&item) <= 150, ETooLongString);
+
     let todo = ToDo {
       id: object::new(ctx),
       item,
@@ -58,6 +63,8 @@ module todo::todo {
     undo: bool,
     todo: &mut ToDo,
   ) {
+    assert!(vector::length(&item) <= 150, ETooLongString);
+
     todo.item = item;
     todo.date = date;
     todo.width = width;
