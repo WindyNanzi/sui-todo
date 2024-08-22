@@ -6,12 +6,13 @@ async function changeENV(val) {
 
     nextTick(() => {
       emitter.emit('update-balance')
+      emitter.emit('update-todo-list')
     })
   }
 }
 const dropList = [
-  { id: 'main', text: 'Mainnet', handle: () => changeENV('main') },
-  // { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
+  // { id: 'main', text: 'Mainnet', handle: () => changeENV('main') },
+  { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
   { id: 'dev', text: 'Devnet', handle: () => changeENV('dev') },
 ]
 
