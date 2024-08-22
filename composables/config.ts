@@ -7,13 +7,24 @@ export const SUI_CLIENT = computed(() => unref(useClient(unref(SUI_CURRENT_NODE_
 export const PACKAGE_ID = computed(() => {
   const env = unref(SUI_CURRENT_ENV)
   if(env === 'dev') {
-    return '0xf495da22740f7262fb98688677ddcd8ddd3831d998daa9868089cd9ac5225e7e'
-  } else {
-    return '0xf495da22740f7262fb98688677ddcd8ddd3831d998daa9868089cd9ac5225e7e'
+    return '0xdeb1b826e54ee28fe5513884e59ba2c37dc1a2e93cde2fc19fee656f4710cc57'
+  } else if(env === 'test') {
+    return '0x4c4bbf49cb8924406e5b8f80c96a15ff4d8308785f8a5f2e2696fbdd5b3d2ce9'
   }
 })
 
+export const APP_PROVER_URL = computed(() => {
+  const env = unref(SUI_CURRENT_ENV)
+  if(env === 'dev') {
+    return 'https://prover-dev.mystenlabs.com/v1'
+  }else {
+    return 'https://prover.mystenlabs.com/v1'
+  }
+})
+
+
 export const emitter = mitt()
 export const GOOGLE_CLIENT_ID = '557707932211-ihdomp72ajur19ts091ijet2ale3fkdm.apps.googleusercontent.com'
-export const APP_PROVER_URL = "https://prover-dev.mystenlabs.com/v1"
-export const APP_REDIRECT_URL = "http://localhost:3003"
+export const APP_REDIRECT_URL = process.env.NODE_ENV  === 'development'
+  ? 'http://localhost:3003'
+  : 'https://sui-todo.netlify.app'
