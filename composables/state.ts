@@ -131,7 +131,7 @@ export async function generateZkLoginSignature(userSignature: string) {
  * @returns 
  */
 async function verifyPartialZkLoginSignature(zkpRequestPayload: any): Promise<PartialZkLoginSignature> {
-    const { data: proofResponse, error, status } = await apiCore(APP_PROVER_URL, {
+    const { data: proofResponse, error, status } = await apiCore(unref(APP_PROVER_URL), {
       method: 'POST',
       body: {
         ...zkpRequestPayload
