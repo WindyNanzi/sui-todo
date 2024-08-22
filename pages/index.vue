@@ -93,7 +93,8 @@ onUnmounted(() => {
 <template>
   <main class="main">
     <div v-loading="listLoading" class="todo-list" :class="[{ 'is-lock': lock }]">
-      <ElTimeline>
+      <ElEmpty class="empty" v-if="showList.length === 0" />
+      <ElTimeline v-show="showList.length > 0">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
           <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />
         </ElTimelineItem>
@@ -153,5 +154,8 @@ main {
       pointer-events: none;
     }
   }
+}
+.empty {
+  margin-top: 100px;
 }
 </style>
