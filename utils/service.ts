@@ -88,6 +88,7 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
   }).then((res) => {
     const { bytes, signature } = res;
     tmpBytes = bytes
+    // return signature
     return generateZkLoginSignature(signature)
   }).then(res => {
     return client.executeTransactionBlock({
