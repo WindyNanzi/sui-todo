@@ -107,11 +107,14 @@ function selectAll() {
 
 
 function removeSelectedItems() {
+  listLoading.value = true
   removeTodoItemList(unref(selectItems)).then(() => {
-    ElMessage.success('delete success!')
+    ElMessage.success('success deleted!')
     updateTodoList()
   }).catch(err => {
     ElMessage.error(err?.message)
+  }).finally(() => {
+    listLoading.value = false
   })
   retraction()
 }
