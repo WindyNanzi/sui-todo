@@ -49,16 +49,16 @@ const taskTexts = [
 const iconPrefix = 'i-line-md-'
 const finishIconName = computed(() => `${iconPrefix}${props.undo ? 'circle' : 'circle-to-confirm-circle-transition'}`)
 
-function getDateOffset () {
+function getDateOffset() {
   const today = dayjs().startOf('day').valueOf()
   const propDate = dayjs(props.date).valueOf()
-  const offset = propDate > today ? 1 
-    : propDate === today 
-    ? 0
-    : -1
+  const offset = propDate > today
+    ? 1
+    : propDate === today
+      ? 0
+      : -1
   return offset
 }
-
 
 const form = reactive({
   item: props.item,
@@ -77,7 +77,6 @@ const rules = {
 
 const dialogFormVisible = ref(false)
 const itemLoading = ref(false)
-
 
 function updatePage() {
   emitter.emit('update-balance')
@@ -113,12 +112,11 @@ async function setItem() {
   dialogFormVisible.value = false
   let date = dayjs(props.date).valueOf()
 
-  if(form.todoDateOffset > -1) {
+  if (form.todoDateOffset > -1) {
     const now = dayjs().add(form.todoDateOffset, 'day')
     const day = now.startOf('day')
     date = day.valueOf()
   }
-
 
   setTodoItem({
     item: form.item,
@@ -172,7 +170,7 @@ function closeDialog() {
       </ElText>
     </div>
 
-    <div class="operates">
+    <div v-show="!showSelect" class="operates">
       <ElPopconfirm title="Are you sure to delete this?" @confirm="removeItem">
         <template #reference>
           <Icon class="remove-icon" name="i-line-md-close" style="color: #FF0F50;" />
@@ -183,7 +181,7 @@ function closeDialog() {
     </div>
   </div>
 
-  <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500" destroy-on-close @open="onDialogOpen" >
+  <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500" destroy-on-close @open="onDialogOpen">
     <ElForm :model="form" :rules="rules">
       <ElFormItem>
         <ElInput

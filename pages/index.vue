@@ -179,7 +179,7 @@ onUnmounted(() => {
               v-model="selectedMap[todoItem.id]"
               style="margin-right: 12px;"
             />
-            <TodoItem v-bind="todoItem" />
+            <TodoItem v-bind="todoItem" :show-select="showSelect" />
           </div>
         </ElTimelineItem>
       </ElTimeline>
@@ -277,7 +277,11 @@ main {
 
 .is-lock {
   :deep(.todo-item) {
-    .remove-icon, .undo-icon {
+    .operates {
+      cursor: not-allowed;
+    }
+
+    .remove-icon, .undo-icon, .setting-icon {
       pointer-events: none;
     }
   }
