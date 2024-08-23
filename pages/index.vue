@@ -100,14 +100,14 @@ onUnmounted(() => {
 
 <template>
   <main class="main">
-    <div v-loading="listLoading" class="todo-list" :class="[{ 'is-lock': lock }]">
+    <div class="todo-list" :class="[{ 'is-lock': lock }]">
       <div class="operate-box">
         <ElTooltip content="refuse data" placement="top">
           <Icon class="refuse" :class="[{ loop: isRefuse }]" name="i-line-md-rotate-270" @click="refuse" />
         </ElTooltip>
       </div>
-      <ElEmpty v-if="showList.length === 0" class="empty" />
-      <ElTimeline v-show="showList.length > 0">
+      <ElEmpty v-if="showList.length === 0" v-loading="listLoading" class="empty" />
+      <ElTimeline v-show="showList.length > 0" v-loading="listLoading">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
           <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />
         </ElTimelineItem>
