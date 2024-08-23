@@ -232,7 +232,7 @@ function closeDialog() {
   display: flex;
   flex: 1;
   height: 30px;
-  margin: 10px 0;
+  padding: 5px;
   justify-content: space-between;
   align-items: center;
 
