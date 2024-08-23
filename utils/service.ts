@@ -72,7 +72,7 @@ export async function getFeesByAddress(address: string) {
 }
 
 
-export  function makeMoveCall(txtData: any, txb: Transaction) {
+export  function makeMoveCall(txData: any[], txb: Transaction) {
   const client = unref(SUI_CLIENT)
   const keypairs = getEd25519Keypair()
   const sender = unref(useWalletAddress())
@@ -80,7 +80,9 @@ export  function makeMoveCall(txtData: any, txb: Transaction) {
 
   txb.setGasBudget(1_000_000_000)
   txb.setSender(sender)
-  txb.moveCall(txtData)
+  txData.forEach(tx => {
+    txb.moveCall(tx)
+  })
 
   return txb.sign({
     client,
@@ -139,7 +141,7 @@ export async function addTodoItem(params: TodoItem) {
     ]
   }
 
-  return makeMoveCall(objs, txb)
+  return makeMoveCall([objs], txb)
 }
 
 
@@ -185,7 +187,7 @@ export async function setTodoItem(params: TodoItem) {
     ]
   }
 
-  return makeMoveCall(objs, txb)
+  return makeMoveCall([objs], txb)
 }
 
 
@@ -203,5 +205,22 @@ export async function removeTodoItem(id: string) {
     ]
   }
 
-  return makeMoveCall(objs, txb)
+  return makeMoveCall([objs], txb)
+}
+
+export async function removeTodoItemList(ids: string[]) {
+  const txb = new Transaction()
+  const packageId = unref(PACKAGE_ID)
+  
+
+  const txs = ids.map(id => ({
+    package: packageId,
+    module: 'todo',
+    function: 'remove',
+    arguments: [
+      txb.object(id)
+    ]
+  }))
+  
+  return makeMoveCall([...txs], txb)
 }
