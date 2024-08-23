@@ -99,19 +99,17 @@ function retraction() {
   showSelect.value = false
 }
 
-
 function selectAll() {
   allSelected.value = !allSelected.value
   setSelectedMap(unref(allSelected))
 }
-
 
 function removeSelectedItems() {
   listLoading.value = true
   removeTodoItemList(unref(selectItems)).then(() => {
     ElMessage.success('success deleted!')
     updateTodoList()
-  }).catch(err => {
+  }).catch((err) => {
     ElMessage.error(err?.message)
   }).finally(() => {
     listLoading.value = false
@@ -143,31 +141,31 @@ onUnmounted(() => {
         </ElTooltip>
         <template v-if="todoList.length > 1">
           <ElTooltip content="batch delete" placement="top">
-            <Icon 
-              v-show="!showSelect" 
+            <Icon
+              v-show="!showSelect"
               class="operate-icon"
-              name="i-line-md-square" 
-              @click="showSelect = true" 
+              name="i-line-md-square"
+              @click="showSelect = true"
             />
           </ElTooltip>
         </template>
-        
+
         <ElTooltip content="select all" placement="top">
           <Icon
             v-show="showSelect"
-            :class="['operate-icon', { 'all-selected': allSelected }]" 
+            class="operate-icon" :class="[{ 'all-selected': allSelected }]"
             name="i-line-md-square-to-confirm-square-transition"
-            @click="selectAll" 
+            @click="selectAll"
           />
         </ElTooltip>
-        
+
         <ElTooltip content="retraction" placement="top">
           <Icon v-show="showSelect" class="operate-icon" name="i-line-md-rotate-180" @click="retraction" />
         </ElTooltip>
 
         <ElPopconfirm title="Are you sure to delete selected items?" placement="top" @confirm="removeSelectedItems">
           <template #reference>
-            <ElBadge :value="selectItems.length"  :offset="[-1, 5]" v-show="showSelect && selectItems.length > 0">
+            <ElBadge v-show="showSelect && selectItems.length > 0" :value="selectItems.length" :offset="[-1, 5]">
               <Icon class="operate-icon" name="i-line-md-remove" style="color: #FF0F50; position: relative; top: -3px;" />
             </ElBadge>
           </template>
@@ -176,15 +174,14 @@ onUnmounted(() => {
       <ElEmpty v-if="todoList.length === 0" v-loading="listLoading" class="empty" />
       <ElTimeline v-show="showList.length > 0" v-loading="listLoading">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
-          <div  class="todo-item-container" v-for="todoItem in item.list" :key="todoItem.id">
-            <ElCheckbox 
+          <div v-for="todoItem in item.list" :key="todoItem.id" class="todo-item-container">
+            <ElCheckbox
               v-show="showSelect"
               v-model="selectedMap[todoItem.id]"
               style="margin-right: 12px;"
             />
-            <TodoItem  v-bind="todoItem"/>
+            <TodoItem v-bind="todoItem" />
           </div>
-          
         </ElTimelineItem>
       </ElTimeline>
       <ElDivider v-if="needShowMore" border-style="dashed">

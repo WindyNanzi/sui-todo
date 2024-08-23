@@ -28,7 +28,7 @@ const props = defineProps({
   },
   showSelect: {
     type: Boolean,
-    default: false
+    default: false,
   },
 })
 
