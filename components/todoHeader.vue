@@ -12,7 +12,7 @@ const props = defineProps({
     <Favor v-if="!props.onlySwitch" />
     <NuxtLink to="https://github.com/WindyNanzi/sui-todo" target="_blank">
       <ElButton circle style="font-size: 20px; margin-right: 12px;">
-        <Icon name="i-line-md-github-loop"  />
+        <Icon name="i-line-md-github-loop" />
       </ElButton>
     </NuxtLink>
     <ChangeTheme />
