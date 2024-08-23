@@ -132,12 +132,15 @@ async function removeItem() {
   })
 }
 
-function closeDialog() {
-  dialogFormVisible.value = false
+function onDialogOpen() {
   form.item = props.item
   form.undo = props.undo
   form.background = props.background
   form.width = props.width
+}
+
+function closeDialog() {
+  dialogFormVisible.value = false
 }
 </script>
 
@@ -160,7 +163,7 @@ function closeDialog() {
     </div>
   </div>
 
-  <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500" destroy-on-close>
+  <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500" destroy-on-close @open="onDialogOpen" >
     <ElForm :model="form" :rules="rules">
       <ElFormItem>
         <ElInput
