@@ -1,75 +1,68 @@
-# Nuxt 3 Minimal Starter
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
+# sui todo
 
-Make sure to install the dependencies:
+一个搭建在sui链上的 todo list 应用
 
-```bash
-# npm
-npm install
+<!-- PROJECT SHIELDS -->
+![License](https://img.shields.io/badge/license-MIT-yellow)
+![Language](https://img.shields.io/badge/language-TS-blue)
+![Language](https://img.shields.io/badge/language-SUI-lightblue)
+<!-- PROJECT LOGO -->
+<br />
 
-# pnpm
+<p align="center">
+  <a href="https://github.com/WindyNanzi/sui-todo/">
+    <img src="public/favicon.png" alt="Logo" width="80" height="80">
+  </a>
+</p>
+
+## Introduce
+- sui todo 是基于 `Nuxt3`，配合 `@mysten/sui`, 以及 `@mysten/zklogin` 的一款简单的 todo list 应用。目前仅支持在 `devnet` 环境下预览使用。
+
+- 使用 Google 账户进行登录后，点击右上角的 ⚙ ，点击 `Get fees` 即可获得用于后续操作的 coin。
+---
+- Sui Todo is a simple to-do list application based on Nuxt3, combined with `@mysten/sui` and `@mysten/zklogin`. Currently, it only supports preview use in the `devnet` environment.
+
+- After logging in with a Google account, click on the button in the upper right corner ⚙ ， Click 'Get fees' to obtain coins for subsequent operations.
+
+
+> Tips：
+>
+> 输入框回车即可添加 todo 事项，一般来说列表会自动刷新，但是也有可能出现数据延时同步的情况，可以手动点击刷新按钮
+>
+> Enter the input box to add Todo items. Generally, the list will automatically refresh, but there may also be data synchronization delays. You can manually click the refresh button
+
+
+## For developer
+### Install
+```sh
+git clone https://github.com/WindyNanzi/sui-todo.git
+
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+### Publish Todo
+```sh
+cd todo
 
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+sui client publish
 ```
 
-## Production
+### config
+You can set configs in `composibles/config.ts`，such as:
+- PACKAGE_ID
+- GOOGLE_CLIENT_ID
+- APP_REDIRECT_URL
 
-Build the application for production:
 
-```bash
-# npm
-npm run build
+## Reference
+[Building a Dapp with React, Move, and zkLogin on Sui Blockchain](https://dacade.org/communities/sui/challenges/19885730-fb83-477a-b95b-4ab265b61438/learning-modules/c9e21ff5-e7b3-4583-b21c-00c7176c10cc)
 
-# pnpm
-pnpm run build
 
-# yarn
-yarn build
+## 版权说明
 
-# bun
-bun run build
-```
+该项目签署了MIT 授权许可，详情请参阅 [LICENSE.txt](/LICENSE.txt)
 
-Locally preview production build:
 
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Thanks !
