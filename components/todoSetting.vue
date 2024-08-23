@@ -12,7 +12,7 @@ async function changeENV(val) {
 }
 const dropList = [
   // { id: 'main', text: 'Mainnet', handle: () => changeENV('main') },
-  { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
+  // { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
   { id: 'dev', text: 'Devnet', handle: () => changeENV('dev') },
 ]
 

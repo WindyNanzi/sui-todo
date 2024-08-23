@@ -47,6 +47,7 @@ async function add() {
     background: '',
   }).then(() => {
     item.value = ''
+    ElMessage.success('success added!')
     updatePage()
   }).catch((err) => {
     ElMessage.error(err?.message)

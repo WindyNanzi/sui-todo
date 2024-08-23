@@ -6,6 +6,7 @@ const todoList = ref([])
 const listLoading = ref(false)
 const showMore = ref(false)
 const lock = ref(false) // 设置 todo-item operate 的 lock 状态，防止频繁点击报错
+const isRefuse = ref(false)
 
 function generateSortList(list) {
   const listMap = list.reduce((pre, cur) => {
@@ -32,7 +33,7 @@ function generateSortList(list) {
 
 function updateTodoList() {
   listLoading.value = true
-  getTodoItems().then((list) => {
+  return getTodoItems().then((list) => {
     const tempList = list.sort((a, b) => { // sort by width and undo
       const aOffset = a.undo ? 0 : 5
       const bOffset = b.undo ? 0 : 5
@@ -75,12 +76,19 @@ const showList = computed(() => {
   }
 })
 
+function refuse() {
+  isRefuse.value = true
+  updateTodoList().finally(() => {
+    isRefuse.value = false
+  })
+}
+
 onMounted(() => {
   if (!unref(useIsAuthenticated())) {
     return navigateTo('/login')
   }
   updateTodoList()
-  emitter.on('update-todo-list', () => updateTodoList())
+  emitter.on('update-todo-list', () => setTimeout(updateTodoList(), 500))
   emitter.on('update-list-loading', val => listLoading.value = val)
   emitter.on('update-todo-item-operate-lock-status', val => lock.value = val)
 })
@@ -93,6 +101,11 @@ onUnmounted(() => {
 <template>
   <main class="main">
     <div v-loading="listLoading" class="todo-list" :class="[{ 'is-lock': lock }]">
+      <div class="operate-box">
+        <ElTooltip content="refuse data" placement="top">
+          <Icon class="refuse" :class="[{ loop: isRefuse }]" name="i-line-md-rotate-270" @click="refuse" />
+        </ElTooltip>
+      </div>
       <ElEmpty v-if="showList.length === 0" class="empty" />
       <ElTimeline v-show="showList.length > 0">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
@@ -126,10 +139,42 @@ main {
 }
 
 .todo-list {
+  position: relative;
   width: 80%;
   height: calc(100vh - 200px);
   padding-right: 10px;
   overflow-y: auto;
+}
+
+.dark {
+  .operate-box {
+    background: #121212;
+  }
+}
+.operate-box {
+  position: sticky;
+  top: 0;
+  margin: 0 0 12px 30px;
+  z-index: 1;
+  background: #ffffff;
+}
+
+.refuse {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.loop {
+  animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .input-container {
