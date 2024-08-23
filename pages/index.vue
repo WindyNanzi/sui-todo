@@ -48,7 +48,6 @@ function updateTodoList() {
       const id = addr.id
       const u8Arr = new Uint8Array(arr)
       const item = bcs.string().parse(u8Arr)
-      // console.log(item)
       return {
         ...todo,
         item,
@@ -172,7 +171,7 @@ onUnmounted(() => {
         </ElPopconfirm>
       </div>
       <ElEmpty v-if="todoList.length === 0" v-loading="listLoading" class="empty" />
-      <ElTimeline v-show="showList.length > 0" v-loading="listLoading">
+      <ElTimeline v-show="showList.length > 0" v-loading="listLoading" style="padding: 10px">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
           <div v-for="todoItem in item.list" :key="todoItem.id" class="todo-item-container">
             <ElCheckbox
@@ -214,7 +213,6 @@ main {
   position: relative;
   width: 80%;
   height: calc(100vh - 200px);
-  padding-right: 10px;
   overflow-y: auto;
 }
 
@@ -232,7 +230,7 @@ main {
 .operate-box {
   position: sticky;
   top: 0;
-  margin: 0 0 12px 30px;
+  margin: 0 0 12px 20px;
   z-index: 2;
   background: #ffffff;
   font-size: 30px;
