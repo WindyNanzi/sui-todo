@@ -49,12 +49,23 @@ const taskTexts = [
 const iconPrefix = 'i-line-md-'
 const finishIconName = computed(() => `${iconPrefix}${props.undo ? 'circle' : 'circle-to-confirm-circle-transition'}`)
 
+function getDateOffset () {
+  const today = dayjs().startOf('day').valueOf()
+  const propDate = dayjs(props.date).valueOf()
+  const offset = propDate > today ? 1 
+    : propDate === today 
+    ? 0
+    : -1
+  return offset
+}
+
+
 const form = reactive({
   item: props.item,
   width: props.width,
   undo: props.undo,
   background: props.background,
-  date: props.date,
+  todoDateOffset: getDateOffset(),
 })
 
 const rules = {
@@ -67,7 +78,6 @@ const rules = {
 const dialogFormVisible = ref(false)
 const itemLoading = ref(false)
 
-const date = dayjs(props.date).valueOf()
 
 function updatePage() {
   emitter.emit('update-balance')
@@ -77,6 +87,7 @@ function updatePage() {
 async function setItemUndo() {
   itemLoading.value = true
   emitter.emit('update-todo-item-operate-lock-status', true)
+  const date = dayjs(props.date).valueOf()
   const undo = !props.undo
 
   setTodoItem({
@@ -100,6 +111,14 @@ async function setItem() {
   itemLoading.value = true
   emitter.emit('update-todo-item-operate-lock-status', true)
   dialogFormVisible.value = false
+  let date = dayjs(props.date).valueOf()
+
+  if(form.todoDateOffset > -1) {
+    const now = dayjs().add(form.todoDateOffset, 'day')
+    const day = now.startOf('day')
+    date = day.valueOf()
+  }
+
 
   setTodoItem({
     item: form.item,
@@ -137,6 +156,7 @@ function onDialogOpen() {
   form.undo = props.undo
   form.background = props.background
   form.width = props.width
+  form.todoDateOffset = getDateOffset()
 }
 
 function closeDialog() {
@@ -186,6 +206,12 @@ function closeDialog() {
           inactive-text="Undone"
           @change="val => form.undo = !val"
         />
+      </ElFormItem>
+      <ElFormItem>
+        <ElRadioGroup v-model="form.todoDateOffset" size="small">
+          <ElRadioButton label="today" :value="0" />
+          <ElRadioButton label="tomorrow" :value="1" />
+        </ElRadioGroup>
       </ElFormItem>
     </ElForm>
     <template #footer>
