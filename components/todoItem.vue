@@ -26,6 +26,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  showSelect: {
+    type: Boolean,
+    default: false
+  },
 })
 
 const taskColors = {
@@ -69,8 +73,6 @@ function updatePage() {
   emitter.emit('update-balance')
   emitter.emit('update-todo-list')
 }
-
-// const updateListLoading = val => emitter.emit('update-list-loading', val)
 
 async function setItemUndo() {
   itemLoading.value = true
@@ -158,7 +160,7 @@ function closeDialog() {
     </div>
   </div>
 
-  <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500">
+  <ElDialog v-model="dialogFormVisible" title="Edit Todo Item" width="500" destroy-on-close>
     <ElForm :model="form" :rules="rules">
       <ElFormItem>
         <ElInput
@@ -199,11 +201,11 @@ function closeDialog() {
 <style lang="scss" scoped>
 .todo-item {
   display: flex;
+  flex: 1;
   height: 30px;
   margin: 10px 0;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px dashed adjust-hue($color: #333, $degrees: 0.1);
 
   &.is-finish {
     opacity: .5;

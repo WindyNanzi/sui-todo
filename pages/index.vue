@@ -7,6 +7,10 @@ const listLoading = ref(false)
 const showMore = ref(false)
 const lock = ref(false) // 设置 todo-item operate 的 lock 状态，防止频繁点击报错
 const isRefuse = ref(false)
+const showSelect = ref(false)
+const selectedMap = reactive({})
+const allSelected = ref(false)
+const selectItems = computed(() => Object.keys(selectedMap).filter(key => selectedMap[key]))
 
 function generateSortList(list) {
   const listMap = list.reduce((pre, cur) => {
@@ -83,12 +87,41 @@ function refuse() {
   })
 }
 
+function setSelectedMap(val) {
+  unref(todoList).forEach((item) => {
+    selectedMap[item.id] = val
+  })
+}
+
+function retraction() {
+  setSelectedMap(false)
+  allSelected.value = false
+  showSelect.value = false
+}
+
+
+function selectAll() {
+  allSelected.value = !allSelected.value
+  setSelectedMap(unref(allSelected))
+}
+
+
+function removeSelectedItems() {
+  removeTodoItemList(unref(selectItems)).then(() => {
+    ElMessage.success('delete success!')
+    updateTodoList()
+  }).catch(err => {
+    ElMessage.error(err?.message)
+  })
+  retraction()
+}
+
 onMounted(() => {
   if (!unref(useIsAuthenticated())) {
     return navigateTo('/login')
   }
-  updateTodoList()
-  emitter.on('update-todo-list', () => setTimeout(updateTodoList(), 500))
+  updateTodoList().then(() => setSelectedMap(false))
+  emitter.on('update-todo-list', () => setTimeout(() => updateTodoList(), 500))
   emitter.on('update-list-loading', val => listLoading.value = val)
   emitter.on('update-todo-item-operate-lock-status', val => lock.value = val)
 })
@@ -103,13 +136,52 @@ onUnmounted(() => {
     <div class="todo-list" :class="[{ 'is-lock': lock }]">
       <div class="operate-box">
         <ElTooltip content="refuse data" placement="top">
-          <Icon class="refuse" :class="[{ loop: isRefuse }]" name="i-line-md-rotate-270" @click="refuse" />
+          <Icon class="operate-icon" :class="[{ loop: isRefuse }]" name="i-line-md-rotate-270" @click="refuse" />
         </ElTooltip>
+        <template v-if="todoList.length > 1">
+          <ElTooltip content="batch delete" placement="top">
+            <Icon 
+              v-show="!showSelect" 
+              class="operate-icon"
+              name="i-line-md-square" 
+              @click="showSelect = true" 
+            />
+          </ElTooltip>
+        </template>
+        
+        <ElTooltip content="select all" placement="top">
+          <Icon
+            v-show="showSelect"
+            :class="['operate-icon', { 'all-selected': allSelected }]" 
+            name="i-line-md-square-to-confirm-square-transition"
+            @click="selectAll" 
+          />
+        </ElTooltip>
+        
+        <ElTooltip content="retraction" placement="top">
+          <Icon v-show="showSelect" class="operate-icon" name="i-line-md-rotate-180" @click="retraction" />
+        </ElTooltip>
+
+        <ElPopconfirm title="Are you sure to delete selected items?" placement="top" @confirm="removeSelectedItems">
+          <template #reference>
+            <ElBadge :value="selectItems.length"  :offset="[-1, 5]" v-show="showSelect && selectItems.length > 0">
+              <Icon class="operate-icon" name="i-line-md-remove" style="color: #FF0F50; position: relative; top: -3px;" />
+            </ElBadge>
+          </template>
+        </ElPopconfirm>
       </div>
-      <ElEmpty v-if="showList.length === 0" v-loading="listLoading" class="empty" />
+      <ElEmpty v-if="todoList.length === 0" v-loading="listLoading" class="empty" />
       <ElTimeline v-show="showList.length > 0" v-loading="listLoading">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
-          <TodoItem v-for="todoItem in item.list" v-bind="todoItem" :key="item.id" />
+          <div  class="todo-item-container" v-for="todoItem in item.list" :key="todoItem.id">
+            <ElCheckbox 
+              v-show="showSelect"
+              v-model="selectedMap[todoItem.id]"
+              style="margin-right: 12px;"
+            />
+            <TodoItem  v-bind="todoItem"/>
+          </div>
+          
         </ElTimelineItem>
       </ElTimeline>
       <ElDivider v-if="needShowMore" border-style="dashed">
@@ -146,6 +218,12 @@ main {
   overflow-y: auto;
 }
 
+.todo-item-container {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dashed adjust-hue($color: #333, $degrees: 0.1);
+}
+
 .dark {
   .operate-box {
     background: #121212;
@@ -155,12 +233,18 @@ main {
   position: sticky;
   top: 0;
   margin: 0 0 12px 30px;
-  z-index: 1;
+  z-index: 2;
   background: #ffffff;
+  font-size: 30px;
+  height: 40px;
+  transition: 500ms;
 }
 
-.refuse {
-  font-size: 30px;
+.all-selected {
+  color: #409EFF;
+}
+
+.operate-icon {
   cursor: pointer;
 }
 
