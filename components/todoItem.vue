@@ -191,7 +191,7 @@ function closeDialog() {
           show-word-limit
           clearable
           type="textarea"
-          :rows="3"
+          :rows="5"
         />
       </ElFormItem>
       <ElFormItem>
