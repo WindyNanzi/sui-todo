@@ -24,7 +24,7 @@ export async function login() {
 
   return client.getLatestSuiSystemState()
     .then(({ epoch }) => {
-      const maxEpoch = Number(epoch) + 10;
+      const maxEpoch = Number(epoch) + 20; // max seems +30
       const ephemeralKeyPair = new Ed25519Keypair();
       const randomness = generateRandomness();
       const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
