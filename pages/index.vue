@@ -170,7 +170,7 @@ onUnmounted(() => {
           </template>
         </ElPopconfirm>
       </div>
-      <ElEmpty v-if="todoList.length === 0" v-loading="listLoading" class="empty" />
+      <ElEmpty v-if="todoList.length === 0" v-loading="listLoading" class="empty" :image-size="200"/>
       <ElTimeline v-show="showList.length > 0" v-loading="listLoading" style="padding: 10px">
         <ElTimelineItem v-for="item in showList" :key="item.key" :timestamp="item.key" placement="top">
           <div v-for="todoItem in item.list" :key="todoItem.id" class="todo-item-container">
