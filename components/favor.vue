@@ -43,8 +43,8 @@ onMounted(async () => {
   balance.value = Number(0).toFixed(2)
   updateBalance()
 
-  emitter.on('update-balance', (val = false) => {
-    updateBalance(val)
+  emitter.on('update-balance', () => {
+    setTimeout(() => updateBalance(val), 500) 
   })
 })
 </script>
