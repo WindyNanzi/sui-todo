@@ -1,7 +1,7 @@
 #[allow(duplicate_alias)]
 module todo::todo {
-  use std::ascii::String;
-  use std::vector;
+  use std::ascii;
+  use std::ascii::{String, string};
   use sui::object;
   use sui::transfer;
 
@@ -35,8 +35,6 @@ module todo::todo {
     background: String,
     ctx: &mut TxContext
   ) {
-    assert!(vector::length(&item) <= 150, ETooLongString);
-
     let todo = ToDo {
       id: object::new(ctx),
       item,
@@ -63,8 +61,6 @@ module todo::todo {
     undo: bool,
     todo: &mut ToDo,
   ) {
-    assert!(vector::length(&item) <= 150, ETooLongString);
-
     todo.item = item;
     todo.date = date;
     todo.width = width;
