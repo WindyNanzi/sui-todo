@@ -44,7 +44,7 @@ async function logout() {
 <template>
   <el-popover
     :width="200"
-    popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
+    popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 0;"
   >
     <template #reference>
       <ElButton circle class="setting-icon">
@@ -63,7 +63,7 @@ async function logout() {
           </div>
         </div>
 
-        <ElDivider v-show="isFaucetENV" />
+        <ElDivider v-show="isFaucetENV" border-style="dashed"class="divider" />
         <div v-show="isFaucetENV" v-loading="gasLoading" class="popper-item" @click="getGas">
           <div class="badge-box" />
           <div class="text-box">
@@ -72,7 +72,7 @@ async function logout() {
           </div>
         </div>
 
-        <ElDivider />
+        <ElDivider border-style="dashed" class="divider" />
         <div class="popper-item" @click="logout">
           <div class="badge-box" />
           <div class="text-box">
@@ -95,6 +95,7 @@ async function logout() {
   width: 100%;
   display: flex;
   height: 30px;
+  padding: 20px;
   cursor: pointer;
   align-items: center;
 
@@ -117,5 +118,9 @@ async function logout() {
     margin-left: 10px;
     font-size: 20px;
   }
+}
+
+.divider {
+  margin: 0;
 }
 </style>
