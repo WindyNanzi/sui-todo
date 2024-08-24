@@ -233,6 +233,7 @@ function closeDialog() {
   padding: 5px;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
 
   &.is-finish {
     opacity: .5;
