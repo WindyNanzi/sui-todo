@@ -1,7 +1,7 @@
 #[allow(duplicate_alias)]
 module todo::todo {
-  use std::ascii;
-  use std::ascii::{String, string};
+  use std::string::{String, length};
+  use sui::event::emit;
   use sui::object;
   use sui::transfer;
 
@@ -9,7 +9,7 @@ module todo::todo {
 
   public struct ToDo has key, store {
     id: UID,
-    item: vector<u8>,
+    item: String,
     date: u64,
     width: u8,
     undo: bool,
@@ -18,6 +18,10 @@ module todo::todo {
 
   public struct ToDoCap has key {
     id: UID
+  }
+
+  public struct Length has copy,drop {
+    len: u64
   }
 
   fun init(ctx: &mut TxContext) {
@@ -29,12 +33,14 @@ module todo::todo {
   }
 
   public entry fun add (
-    item: vector<u8>,
+    item: String,
     date: u64,
     width: u8,
     background: String,
     ctx: &mut TxContext
   ) {
+    assert!(length(&item) <= 1000, ETooLongString);
+
     let todo = ToDo {
       id: object::new(ctx),
       item,
@@ -43,6 +49,10 @@ module todo::todo {
       background,
       undo: true,
     };
+
+    emit(Length {
+      len: length(&item),
+    });
 
     transfer::transfer(todo, ctx.sender());
   }
@@ -54,18 +64,24 @@ module todo::todo {
 
 
   public entry fun update (
-    item: vector<u8>,
+    item: String,
     date: u64,
     width: u8,
     background: String,
     undo: bool,
     todo: &mut ToDo,
   ) {
+    assert!(length(&item) <= 1000, ETooLongString);
+
     todo.item = item;
     todo.date = date;
     todo.width = width;
     todo.undo = undo;
     todo.background = background;
+
+    emit(Length {
+      len: length(&item),
+    });
   }
 
 }
