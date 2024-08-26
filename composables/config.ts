@@ -7,7 +7,7 @@ export const SUI_CLIENT = computed(() => unref(useClient(unref(SUI_CURRENT_NODE_
 export const PACKAGE_ID = computed(() => {
   const env = unref(SUI_CURRENT_ENV)
   if(env === 'dev') {
-    return '0xaf66b3b57d681dae140a6b74a1063fe4ba891d2b4b28bf55642034ae4777f79c'
+    return '0x6d9514f7a36c496882da0aef2dcd4ec48822aca713d3be68cd073057756e2073'
   } else if(env === 'test') {
     return '0x4c4bbf49cb8924406e5b8f80c96a15ff4d8308785f8a5f2e2696fbdd5b3d2ce9'
   }

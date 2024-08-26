@@ -134,7 +134,8 @@ export async function addTodoItem(params: TodoItem) {
     module: 'todo',
     function: 'add',
     arguments: [
-      txb.pure.vector('u8', bcs.string().serialize(item).toBytes()),
+      // txb.pure.vector('u8', bcs.string().serialize(item).toBytes()),
+      txb.pure.string(item),
       txb.pure.u64(date),
       txb.pure.u8(width),
       txb.pure.string(background),
@@ -178,7 +179,8 @@ export async function setTodoItem(params: TodoItem) {
     module: 'todo',
     function: 'update',
     arguments: [
-      txb.pure.vector('u8', bcs.string().serialize(item).toBytes()),
+      // txb.pure.vector('u8', bcs.string().serialize(item).toBytes()),
+      txb.pure.string(item),
       txb.pure.u64(date),
       txb.pure.u8(width),
       txb.pure.string(background),
