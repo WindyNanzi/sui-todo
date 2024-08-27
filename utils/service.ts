@@ -30,7 +30,7 @@ export async function login() {
   }).catch(err => {
     console.error(err)
   }).finally(() => {
-    instance.close()
+    setTimeout(() => instance.close(), 500)
   })
 }
 
