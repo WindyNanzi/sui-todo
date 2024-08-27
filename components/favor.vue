@@ -51,9 +51,10 @@ onMounted(async () => {
   }
   else {
     loading.value = true
-    ENOKI_FLOW.$zkLoginState.listen((val, oldVal) => {
+    const off = ENOKI_FLOW.$zkLoginState.listen((val, oldVal) => {
       initAddrAndBalance(val.address)
       loading.value = false
+      off()
     })
   }
 
