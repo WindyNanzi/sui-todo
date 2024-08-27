@@ -34,7 +34,6 @@ async function getGas() {
 }
 
 async function logout() {
-  sessionStorage.setItem('jwt-data', '')
   sessionStorage.setItem('sui-jwt-token', '')
   emitter.emit('refuse-header-status')
   navigateTo('/login')
