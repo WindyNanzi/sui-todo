@@ -80,15 +80,6 @@ export async function login() {
 }
 
 
-export async function getAddress() {
-  return GetApi('https://api.enoki.mystenlabs.com/v1/zklogin', {
-    headers: {
-      'zklogin-jwt': unref(useJwt())
-    }
-    
-  })
-}
-
 export async function getFeesByAddress(address: string) {
   const url = `https://faucet.${ unref(SUI_CURRENT_ENV) }net.sui.io:443/gas`
   return apiCore(url, {
@@ -181,28 +172,26 @@ export async function addTodoItem(params: TodoItem) {
 
 
 export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
-  const sender = ENOKI_FLOW.$zkLoginSession;
-  console.log(ENOKI_FLOW)
-  // const sender = unref(useWalletAddress())
-  // const client = unref(SUI_CLIENT)
-  // const packageId = unref(PACKAGE_ID)
+  const sender = unref(useWalletAddress())
+  const client = unref(SUI_CLIENT)
+  const packageId = unref(PACKAGE_ID)
 
-  // return client.getOwnedObjects({
-  //   owner: sender
-  // }).then((ownerObjects) => {
-  //   const { data = [] } = ownerObjects
-  //   const ids = data.map((item) => item.data?.objectId!)
-  //   const options =  { showType: true, showContent: true }
-  //   return client.multiGetObjects({ ids, options })
-  // }).then(objects => {
-  //   const todoItems = objects.filter(obj => {
-  //     return obj.data?.type === `${packageId}::todo::ToDo`
-  //   }).map((item: any) => {
-  //     return item.data?.content?.fields
-  //   })
+  return client.getOwnedObjects({
+    owner: sender
+  }).then((ownerObjects) => {
+    const { data = [] } = ownerObjects
+    const ids = data.map((item) => item.data?.objectId!)
+    const options =  { showType: true, showContent: true }
+    return client.multiGetObjects({ ids, options })
+  }).then(objects => {
+    const todoItems = objects.filter(obj => {
+      return obj.data?.type === `${packageId}::todo::ToDo`
+    }).map((item: any) => {
+      return item.data?.content?.fields
+    })
 
-  //   return todoItems as TodoItem[]
-  // })
+    return todoItems as TodoItem[]
+  })
 }
 
 export async function setTodoItem(params: TodoItem) {
