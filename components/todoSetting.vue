@@ -3,16 +3,16 @@ const currentENV = SUI_CURRENT_ENV
 async function changeENV(val) {
   if (currentENV.value !== val) {
     currentENV.value = val
-
+    sessionStorage.setItem('sui-env', val)
     nextTick(() => {
-      emitter.emit('update-balance')
-      emitter.emit('update-todo-list')
+      login()
     })
+
   }
 }
 const dropList = [
   // { id: 'main', text: 'Mainnet', handle: () => changeENV('main') },
-  // { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
+  { id: 'test', text: 'Testnet', handle: () => changeENV('test') },
   { id: 'dev', text: 'Devnet', handle: () => changeENV('dev') },
 ]
 
@@ -34,8 +34,7 @@ async function getGas() {
 }
 
 async function logout() {
-  sessionStorage.setItem('jwt-data', '')
-  sessionStorage.setItem('sui-jwt-token', '')
+  sessionStorage.clear()
   emitter.emit('refuse-header-status')
   navigateTo('/login')
 }

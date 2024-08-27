@@ -6,6 +6,7 @@ const address = ref('')
 const showAddress = ref('')
 const iconColor = ref('')
 const copyIconName = ref('clipboard')
+const loading = ref(false)
 const balanceLoading = ref(false)
 
 function copy() {
@@ -36,12 +37,26 @@ async function updateBalance() {
   })
 }
 
-onMounted(async () => {
-  address.value = unref(useWalletAddress())
-  showAddress.value = formatAddress(unref(address))
-
-  balance.value = Number(0).toFixed(2)
+function initAddrAndBalance(addr) {
+  address.value = addr
+  showAddress.value = formatAddress(addr)
+  balance.value = Number(0).toFixed(4)
   updateBalance()
+}
+
+onMounted(async () => {
+  const addr = useWalletAddress()
+  if (addr) {
+    initAddrAndBalance(addr)
+  }
+  else {
+    loading.value = true
+    const off = ENOKI_FLOW.$zkLoginState.listen((val, oldVal) => {
+      initAddrAndBalance(val.address)
+      loading.value = false
+      off()
+    })
+  }
 
   emitter.on('update-balance', () => {
     setTimeout(() => updateBalance(), 500)
@@ -50,7 +65,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <aside class="user">
+  <aside v-loading="loading" class="user">
     <ElAvatar
       class="avatar"
       src="/logo.svg"

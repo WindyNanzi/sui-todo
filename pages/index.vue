@@ -117,7 +117,19 @@ onMounted(() => {
   if (!unref(useIsAuthenticated())) {
     return navigateTo('/login')
   }
-  updateTodoList().then(() => setSelectedMap(false))
+
+  const addr = useWalletAddress()
+  if (addr) {
+    updateTodoList(addr)
+  }
+  else {
+    listLoading.value = true
+    const off = ENOKI_FLOW.$zkLoginState.listen((val, oldVal) => {
+      updateTodoList()
+      off()
+    })
+  }
+  
   emitter.on('update-todo-list', () => setTimeout(() => updateTodoList(), 500))
   emitter.on('update-list-loading', val => listLoading.value = val)
   emitter.on('update-todo-item-operate-lock-status', val => lock.value = val)

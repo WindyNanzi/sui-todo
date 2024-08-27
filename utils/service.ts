@@ -1,8 +1,5 @@
-import { generateNonce, generateRandomness } from "@mysten/zklogin"
 import { Transaction } from '@mysten/sui/transactions'
 import { apiCore } from "./api"
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
-import { bcs } from "@mysten/sui/bcs"
 
 
 /** 
@@ -13,47 +10,30 @@ export async function getFormattedBalance(owner: string) {
   return Number(Number(res.totalBalance) / 1000_000_000).toFixed(4);
 }
 
-
 export async function login() {
-  const client = unref(SUI_CLIENT)
-
+  const network = `${unref(SUI_CURRENT_ENV)}net` as 'devnet' | 'testnet' | 'mainnet' | undefined
   const instance = ElLoading.service({
     fullscreen: true,
     text: 'Loading...',
   })
 
-  return client.getLatestSuiSystemState()
-    .then(({ epoch }) => {
-      const maxEpoch = Number(epoch) + 20; // max seems +30
-      const ephemeralKeyPair = new Ed25519Keypair();
-      const randomness = generateRandomness();
-      const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
-      const jwtData = {
-        maxEpoch,
-        nonce,
-        randomness,
-        ephemeralKeyPair,
-      };
-
-      sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
-      const params = new URLSearchParams({
-        client_id: GOOGLE_CLIENT_ID,
-        redirect_uri: APP_REDIRECT_URL,
-        response_type: 'id_token',
-        scope: 'openid email',
-        nonce: nonce,
-      });
-
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params}`
-      window.location.href = authUrl;
-    }).catch(error => {
-      ElMessage.error('Error initiating Google login:', error?.message);
-    }).finally(() => {
-      setTimeout(() => {
-        instance.close()
-      }, 500)
-    })
+  ENOKI_FLOW.createAuthorizationURL({
+    provider: 'google',
+    network,
+    clientId: GOOGLE_CLIENT_ID,
+    redirectUrl: APP_REDIRECT_URL,
+    extraParams: {
+      scope: ['openid', 'email', 'profile']
+    }
+  }).then((url) => {
+    window.location.href = url
+  }).catch(err => {
+    console.error(err)
+  }).finally(() => {
+    setTimeout(() => instance.close(), 500)
+  })
 }
+
 
 export async function getFeesByAddress(address: string) {
   const url = `https://faucet.${ unref(SUI_CURRENT_ENV) }net.sui.io:443/gas`
@@ -74,42 +54,37 @@ export async function getFeesByAddress(address: string) {
 
 export  function makeMoveCall(txData: any[], txb: Transaction) {
   const client = unref(SUI_CLIENT)
-  const keypairs = getEd25519Keypair()
-  const sender = unref(useWalletAddress())
-  let tmpBytes = ''
+  const sender = useWalletAddress()
+  const network = `${ unref(SUI_CURRENT_ENV) }net` as 'testnet' | 'mainnet' | undefined
 
-  txb.setGasBudget(1_000_000_000)
+  let keypair = undefined
+
+  txb.setGasBudget(1_000_000_00)
   txb.setSender(sender)
   txData.forEach(tx => {
     txb.moveCall(tx)
   })
 
-  return txb.sign({
-    client,
-    signer: keypairs,
-  }).then((res) => {
-    const { bytes, signature } = res;
-    tmpBytes = bytes
-    // return signature
-    return generateZkLoginSignature(signature)
-  }).then(res => {
-    return client.executeTransactionBlock({
-      transactionBlock: tmpBytes,
-      signature: res,
-      options: {
-        showEffects: true,
-      },
-      
-    })
-  }).then(res => {
-    const {status = 'success', error = '' }  = res.effects?.status!
-    
-    if(status === 'failure' ) {
-      emitter.emit('update-balance')
-      throw new Error(error)
-    }
+  // network 虽然只接受 testnet 和 mainnet， 但 devnet 传入不会有影响
+  return ENOKI_FLOW.getKeypair({ network }).then(res => {
+    keypair = res
 
-    return res
+    return client.signAndExecuteTransaction({
+      signer: keypair,
+      transaction: txb,
+      options: {
+        showEffects: true
+      }
+    }).then(res => {
+      const {status = 'success', error = '' }  = res.effects?.status!
+      
+      if(status === 'failure' ) {
+        emitter.emit('update-balance')
+        throw new Error(error)
+      }
+  
+      return res
+    })
   })
 }
   
