@@ -60,8 +60,8 @@ You can set configs in `composibles/config.ts`，such as:
 该项目签署了MIT 授权许可，详情请参阅 [LICENSE.txt](/LICENSE.txt)
 
 ## Todo
-- [] 将 zklogin 转移为 Enoki
+- [x] 将 zklogin 转移为 Enoki
 
-- [] 添加 testnet 切换功能
+- [x] 添加 testnet 切换功能
  
 ## Thanks !
