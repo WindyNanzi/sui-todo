@@ -54,8 +54,13 @@ You can set configs in `composibles/config.ts`，such as:
 ## Reference
 [Building a Dapp with React, Move, and zkLogin on Sui Blockchain](https://dacade.org/communities/sui/challenges/19885730-fb83-477a-b95b-4ab265b61438/learning-modules/c9e21ff5-e7b3-4583-b21c-00c7176c10cc)
 
+
 ## 版权说明
 
 该项目签署了MIT 授权许可，详情请参阅 [LICENSE.txt](/LICENSE.txt)
 
+## Todo
+-[] 将 zklogin 转移为 Enoki
+-[] 添加 testnet 切换功能
+ 
 ## Thanks !
