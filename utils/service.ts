@@ -54,9 +54,10 @@ export async function getFeesByAddress(address: string) {
 
 export  function makeMoveCall(txData: any[], txb: Transaction) {
   const client = unref(SUI_CLIENT)
-  const keypairs = getEd25519Keypair()
-  const sender = unref(useWalletAddress())
-  let tmpBytes = ''
+  const sender = useWalletAddress()
+  const network = `${ unref(SUI_CURRENT_ENV) }net` as 'testnet' | 'mainnet' | undefined
+
+  let keypair = undefined
 
   txb.setGasBudget(1_000_000_000)
   txb.setSender(sender)
@@ -64,32 +65,26 @@ export  function makeMoveCall(txData: any[], txb: Transaction) {
     txb.moveCall(tx)
   })
 
-  return txb.sign({
-    client,
-    signer: keypairs,
-  }).then((res) => {
-    const { bytes, signature } = res;
-    tmpBytes = bytes
-    // return signature
-    return generateZkLoginSignature(signature)
-  }).then(res => {
-    return client.executeTransactionBlock({
-      transactionBlock: tmpBytes,
-      signature: res,
-      options: {
-        showEffects: true,
-      },
-      
-    })
-  }).then(res => {
-    const {status = 'success', error = '' }  = res.effects?.status!
-    
-    if(status === 'failure' ) {
-      emitter.emit('update-balance')
-      throw new Error(error)
-    }
+  // network 虽然只接受 testnet 和 mainnet， 但 devnet 传入不会有影响
+  return ENOKI_FLOW.getKeypair({ network }).then(res => {
+    keypair = res
 
-    return res
+    return client.signAndExecuteTransaction({
+      signer: keypair,
+      transaction: txb,
+      options: {
+        showEffects: true
+      }
+    }).then(res => {
+      const {status = 'success', error = '' }  = res.effects?.status!
+      
+      if(status === 'failure' ) {
+        emitter.emit('update-balance')
+        throw new Error(error)
+      }
+  
+      return res
+    })
   })
 }
   
