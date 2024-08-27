@@ -59,7 +59,7 @@ export  function makeMoveCall(txData: any[], txb: Transaction) {
 
   let keypair = undefined
 
-  txb.setGasBudget(1_000_000_000)
+  txb.setGasBudget(1_000_000_00)
   txb.setSender(sender)
   txData.forEach(tx => {
     txb.moveCall(tx)

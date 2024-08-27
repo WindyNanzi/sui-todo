@@ -1,7 +1,12 @@
 import { EnokiFlow } from "@mysten/enoki"
 import mitt from "mitt"
 
-export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('dev')
+let suiEnv = 'test' as SUI_ENV
+if(import.meta.client) {
+  suiEnv = sessionStorage.getItem('sui-env') as SUI_ENV || 'test'
+}
+
+export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref(suiEnv)
 export const SUI_CURRENT_NODE_URL = computed(() => unref(useFullNodeUrl(unref(SUI_CURRENT_ENV)))) 
 export const SUI_CLIENT = computed(() => unref(useClient(unref(SUI_CURRENT_NODE_URL)))) 
 
@@ -10,7 +15,7 @@ export const PACKAGE_ID = computed(() => {
   if(env === 'dev') {
     return '0xa685bf75db6167bce1ebc63370be807d38a73bf9209af893e7f13839487f341d'
   } else if(env === 'test') {
-    return '0x4c4bbf49cb8924406e5b8f80c96a15ff4d8308785f8a5f2e2696fbdd5b3d2ce9'
+    return '0x622bbd1cba3815cc9525e8759f6df074db245e1c17b9b519693481af91c15611'
   }
 })
 
