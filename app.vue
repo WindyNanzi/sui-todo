@@ -20,7 +20,13 @@ onMounted(() => {
   if (params.has(key)) {
     const jwt = params.get(key)
     sessionStorage.setItem('sui-jwt-token', jwt)
-    location.hash = ''
+
+    const state = ENOKI_FLOW.$zkLoginState.get()
+    if (!state.address) {
+      ENOKI_FLOW.handleAuthCallback().then(() => {
+        location.hash = ''
+      })
+    }
   }
 
   if (!unref(useJwt())) {

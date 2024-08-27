@@ -49,10 +49,11 @@ export const useIsAuthenticated = () => {
 
 /** 获取钱包地址 */
 export const useWalletAddress = () => {
-  const jwt = unref(useJwt())
-  const email = unref(useClaims()).email
-  const address = jwtToAddress(jwt, hashcode(email))
-  return ref(address)
+  // const jwt = unref(useJwt())
+  // const email = unref(useClaims()).email
+  // const address = jwtToAddress(jwt, hashcode(email))
+  const state = ENOKI_FLOW.$zkLoginState.get()
+  return state.address || ''
 }
 
 /** 获得最大纪元用于生成随机数 */

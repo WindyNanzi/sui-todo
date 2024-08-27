@@ -1,3 +1,4 @@
+import { EnokiFlow } from "@mysten/enoki"
 import mitt from "mitt"
 
 export const SUI_CURRENT_ENV: Ref<SUI_ENV> = ref('dev')
@@ -28,3 +29,6 @@ export const GOOGLE_CLIENT_ID = '557707932211-ihdomp72ajur19ts091ijet2ale3fkdm.a
 export const APP_REDIRECT_URL = process.env.NODE_ENV  === 'development'
   ? 'http://localhost:3003'
   : 'https://sui-todo.netlify.app'
+
+export const ENOKI_API_KEY = 'enoki_public_ba879152b8d32d35c9f637e821dc89ea'
+export const ENOKI_FLOW = new EnokiFlow({ apiKey: ENOKI_API_KEY });

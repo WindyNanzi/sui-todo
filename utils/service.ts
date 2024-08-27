@@ -1,8 +1,7 @@
-import { generateNonce, generateRandomness } from "@mysten/zklogin"
+// import { generateNonce, generateRandomness } from "@mysten/zklogin"
 import { Transaction } from '@mysten/sui/transactions'
 import { apiCore } from "./api"
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
-import { bcs } from "@mysten/sui/bcs"
+// import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
 
 
 /** 
@@ -14,45 +13,80 @@ export async function getFormattedBalance(owner: string) {
 }
 
 
-export async function login() {
-  const client = unref(SUI_CLIENT)
+// export async function login() {
+//   const client = unref(SUI_CLIENT)
 
+//   const instance = ElLoading.service({
+//     fullscreen: true,
+//     text: 'Loading...',
+//   })
+
+//   return client.getLatestSuiSystemState()
+//     .then(({ epoch }) => {
+//       const maxEpoch = Number(epoch) + 20; // max seems +30
+//       const ephemeralKeyPair = new Ed25519Keypair();
+//       const randomness = generateRandomness();
+//       const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
+//       const jwtData = {
+//         maxEpoch,
+//         nonce,
+//         randomness,
+//         ephemeralKeyPair,
+//       };
+
+
+//       sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
+//       const params = new URLSearchParams({
+//         client_id: GOOGLE_CLIENT_ID,
+//         redirect_uri: APP_REDIRECT_URL,
+//         response_type: 'id_token',
+//         scope: 'openid email',
+//         nonce: nonce,
+//       });
+
+//       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params}`
+//       window.location.href = authUrl;
+//     }).catch(error => {
+//       ElMessage.error('Error initiating Google login:', error?.message);
+//     }).finally(() => {
+//       setTimeout(() => {
+//         instance.close()
+//       }, 500)
+//     })
+// }
+
+export async function login() {
+  const network = `${unref(SUI_CURRENT_ENV)}net` as 'devnet' | 'testnet' | 'mainnet' | undefined
   const instance = ElLoading.service({
     fullscreen: true,
     text: 'Loading...',
   })
 
-  return client.getLatestSuiSystemState()
-    .then(({ epoch }) => {
-      const maxEpoch = Number(epoch) + 20; // max seems +30
-      const ephemeralKeyPair = new Ed25519Keypair();
-      const randomness = generateRandomness();
-      const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
-      const jwtData = {
-        maxEpoch,
-        nonce,
-        randomness,
-        ephemeralKeyPair,
-      };
+  ENOKI_FLOW.createAuthorizationURL({
+    provider: 'google',
+    network,
+    clientId: GOOGLE_CLIENT_ID,
+    redirectUrl: APP_REDIRECT_URL,
+    extraParams: {
+      scope: ['openid', 'email', 'profile']
+    }
+  }).then((url) => {
+    window.location.href = url
+  }).catch(err => {
+    console.error(err)
+  }).finally(() => {
+    instance.close()
+  })
+}
 
-      sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
-      const params = new URLSearchParams({
-        client_id: GOOGLE_CLIENT_ID,
-        redirect_uri: APP_REDIRECT_URL,
-        response_type: 'id_token',
-        scope: 'openid email',
-        nonce: nonce,
-      });
 
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params}`
-      window.location.href = authUrl;
-    }).catch(error => {
-      ElMessage.error('Error initiating Google login:', error?.message);
-    }).finally(() => {
-      setTimeout(() => {
-        instance.close()
-      }, 500)
-    })
+export async function getAddress() {
+  return GetApi('https://api.enoki.mystenlabs.com/v1/zklogin', {
+    headers: {
+      'zklogin-jwt': unref(useJwt())
+    }
+    
+  })
 }
 
 export async function getFeesByAddress(address: string) {
@@ -147,26 +181,28 @@ export async function addTodoItem(params: TodoItem) {
 
 
 export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
-  const sender = unref(useWalletAddress())
-  const client = unref(SUI_CLIENT)
-  const packageId = unref(PACKAGE_ID)
+  const sender = ENOKI_FLOW.$zkLoginSession;
+  console.log(ENOKI_FLOW)
+  // const sender = unref(useWalletAddress())
+  // const client = unref(SUI_CLIENT)
+  // const packageId = unref(PACKAGE_ID)
 
-  return client.getOwnedObjects({
-    owner: sender
-  }).then((ownerObjects) => {
-    const { data = [] } = ownerObjects
-    const ids = data.map((item) => item.data?.objectId!)
-    const options =  { showType: true, showContent: true }
-    return client.multiGetObjects({ ids, options })
-  }).then(objects => {
-    const todoItems = objects.filter(obj => {
-      return obj.data?.type === `${packageId}::todo::ToDo`
-    }).map((item: any) => {
-      return item.data?.content?.fields
-    })
+  // return client.getOwnedObjects({
+  //   owner: sender
+  // }).then((ownerObjects) => {
+  //   const { data = [] } = ownerObjects
+  //   const ids = data.map((item) => item.data?.objectId!)
+  //   const options =  { showType: true, showContent: true }
+  //   return client.multiGetObjects({ ids, options })
+  // }).then(objects => {
+  //   const todoItems = objects.filter(obj => {
+  //     return obj.data?.type === `${packageId}::todo::ToDo`
+  //   }).map((item: any) => {
+  //     return item.data?.content?.fields
+  //   })
 
-    return todoItems as TodoItem[]
-  })
+  //   return todoItems as TodoItem[]
+  // })
 }
 
 export async function setTodoItem(params: TodoItem) {

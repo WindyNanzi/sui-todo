@@ -117,7 +117,12 @@ onMounted(() => {
   if (!unref(useIsAuthenticated())) {
     return navigateTo('/login')
   }
-  updateTodoList().then(() => setSelectedMap(false))
+  // getAddress().then((res) => {
+  //   console.log(res)
+  // }).catch(err => {
+  //   console.error(err)
+  // })
+  // updateTodoList().then(() => setSelectedMap(false))
   emitter.on('update-todo-list', () => setTimeout(() => updateTodoList(), 500))
   emitter.on('update-list-loading', val => listLoading.value = val)
   emitter.on('update-todo-item-operate-lock-status', val => lock.value = val)
