@@ -1,7 +1,5 @@
-// import { generateNonce, generateRandomness } from "@mysten/zklogin"
 import { Transaction } from '@mysten/sui/transactions'
 import { apiCore } from "./api"
-// import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519"
 
 
 /** 
@@ -11,49 +9,6 @@ export async function getFormattedBalance(owner: string) {
   const res = await unref(SUI_CLIENT).getBalance({ owner })
   return Number(Number(res.totalBalance) / 1000_000_000).toFixed(4);
 }
-
-
-// export async function login() {
-//   const client = unref(SUI_CLIENT)
-
-//   const instance = ElLoading.service({
-//     fullscreen: true,
-//     text: 'Loading...',
-//   })
-
-//   return client.getLatestSuiSystemState()
-//     .then(({ epoch }) => {
-//       const maxEpoch = Number(epoch) + 20; // max seems +30
-//       const ephemeralKeyPair = new Ed25519Keypair();
-//       const randomness = generateRandomness();
-//       const nonce = generateNonce(ephemeralKeyPair.getPublicKey(), maxEpoch, randomness);
-//       const jwtData = {
-//         maxEpoch,
-//         nonce,
-//         randomness,
-//         ephemeralKeyPair,
-//       };
-
-
-//       sessionStorage.setItem("jwt-data", JSON.stringify(jwtData));
-//       const params = new URLSearchParams({
-//         client_id: GOOGLE_CLIENT_ID,
-//         redirect_uri: APP_REDIRECT_URL,
-//         response_type: 'id_token',
-//         scope: 'openid email',
-//         nonce: nonce,
-//       });
-
-//       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params}`
-//       window.location.href = authUrl;
-//     }).catch(error => {
-//       ElMessage.error('Error initiating Google login:', error?.message);
-//     }).finally(() => {
-//       setTimeout(() => {
-//         instance.close()
-//       }, 500)
-//     })
-// }
 
 export async function login() {
   const network = `${unref(SUI_CURRENT_ENV)}net` as 'devnet' | 'testnet' | 'mainnet' | undefined
