@@ -1,9 +1,10 @@
 module todo::todo {
+    use std::option::is_none;
     use std::string::{String, length};
     use sui::event::emit;
-    use sui::object::{self, UID};
+    use sui::object;
+    use sui::object::{UID};
     use sui::transfer;
-    use sui::error::abort;
 
     // Error codes for specific errors
     const E_ITEM_TOO_LONG: u64 = 1001;  // Error when item length exceeds limit
@@ -19,21 +20,11 @@ module todo::todo {
         background: String,
     }
 
-    // Capability for managing ToDo objects (no fields necessary)
-    public struct ToDoCap;
-
     // Event struct for tracking actions on ToDo items
     public struct ToDoEvent has copy, drop {
         item: String,
         date: u64,
         action: String,
-    }
-
-    // Initialize function to create a capability object
-    fun init(ctx: &mut TxContext) {
-        let todo_cap = ToDoCap {};
-        // Share or publicize the capability as needed
-        transfer::freeze_object(todo_cap);
     }
 
     // Add a new ToDo item
@@ -48,11 +39,9 @@ module todo::todo {
         assert!(length(&item) <= 1000, E_ITEM_TOO_LONG);
         
         let id = object::new(ctx);
-        if (id.is_none()) {
-            abort(E_OBJECT_CREATION_FAILED);
-        }
+
         let todo = ToDo {
-            id: id.unwrap(),
+            id,
             item,
             date,
             width,
@@ -62,17 +51,20 @@ module todo::todo {
 
         // Emit a more informative event
         emit(ToDoEvent {
-            item: todo.item.clone(),
+            item,
             date: todo.date,
-            action: "add".to_string(),
+            action: b"add".to_string(),
         });
 
-        transfer::publicize_object(todo);
+        transfer::public_transfer(todo, ctx.sender());
     }
 
     // Remove a ToDo item
     public entry fun remove(todo: ToDo) {
-        object::delete(todo.id);
+        let ToDo { id, item:_, date:_, width:_, undo:_, background:_ } = todo;
+        object::delete(id);
+        // It seems impossible to directly delete the ID because other properties of this object need to be released
+        // object::delete(todo.id);
     }
 
     // Update a ToDo item
@@ -95,15 +87,16 @@ module todo::todo {
 
         // Emit an event for the update operation
         emit(ToDoEvent {
-            item: todo.item.clone(),
-            date: todo.date,
-            action: "update".to_string(),
+            item,
+            date,
+            action: b"update".to_string(),
         });
     }
 
+    // Inquiries seems to be an old version keyword
     // Security and access control function (example)
-    fun is_authorized(sender: address, todo: &ToDo) acquires ToDo {
-        // Add logic to check if the sender is authorized to modify this ToDo
-        // E.g., compare sender with the creator's address stored in the ToDo
-    }
+    // fun is_authorized(sender: address, todo: &ToDo) acquires ToDo {
+    //     // Add logic to check if the sender is authorized to modify this ToDo
+    //     // E.g., compare sender with the creator's address stored in the ToDo
+    // }
 }
