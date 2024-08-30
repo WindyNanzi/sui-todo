@@ -233,7 +233,7 @@ main {
 
 .dark {
   .operate-box {
-    background: #121212;
+    background: rgba($color: #121212, $alpha: 0.8);
   }
 }
 .operate-box {
@@ -243,8 +243,11 @@ main {
   z-index: 2;
   background: #ffffff;
   font-size: 30px;
-  height: 40px;
+  height: 50px;
+  line-height: 50px;
   transition: 500ms;
+  background: rgba($color: #ffffff, $alpha: 0.8);
+  backdrop-filter: blur(3px);
 }
 
 .all-selected {
