@@ -126,6 +126,10 @@ export async function getTodoItems(): Promise<void | Boolean | TodoItem[]> {
   const client = unref(SUI_CLIENT)
   const packageId = unref(PACKAGE_ID)
 
+  // 存在分页的方法，但是分页功能有限
+  // getOwnedObjects 存在3个参数，分别是地址，游标 cursor, 和 limit
+  // 但是它获取到的对象类型不是同一类，所以光靠 cursor 和 limit 影响有限，甚至可能出现请求后没有数据的情况
+  // 在数据量小的时候可以不需要分页功能
   return client.getOwnedObjects({
     owner: sender
   }).then((ownerObjects) => {
